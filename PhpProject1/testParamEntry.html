@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Endurance Test -- Tekno Valves</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--
+	 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">	 
+	 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	 <link rel="stylesheet" href="/resources/demos/style.css">   
+	 
+	<link rel="stylesheet" href="/resources/demos/style.css">   
+ -->
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/smoothness/jquery-ui-1.8.16.custom.css">
+	<!--<link rel="stylesheet" href="css/normalize.min.css">-->
+	<link rel="stylesheet" href="css/main.css"> 
+	<script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script>
+	<script src="js/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
+	<!--
+	<script src="js/vendor/modernizr-2.6.2.min.js"></script>
+	-->
+	
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body onload = "testParamEntryEventAdd();
+		    DrawCanvasForParamEntry('canvasParamEntryMain');
+		    ETParam_ShowGetTestPressure();		    
+		    SetBackArrowDefocused('canvasBackArrow');
+		    SetExitArrowDefocused('canvasExit');		    
+		    CanvasDrawTriangle('CanvasIncrementArrow',0, 40, 40, 40, 20, 0);            
+		    CanvasDrawTriangle('CanvasDecrementArrow',0, 0, 40, 0, 20, 40);		 
+              ">
+        	
+        <div id="maincontent">
+            <div id="logobar">
+            
+		<div class="logoimages">
+			<a title="Tekno Valves" href="index.php"><img border="0" src="img/tekno.gif" width="222" height="65"></a>
+		</div>
+            
+		<div class="logoimages" style="width:25px;">&nbsp;</div>
+		<!--
+		<div class="logoimages">
+			<img border="0" src="img/manak.gif" width="85" height="61">
+		</div>
+		-->    
+		<div class="logoimages">
+			<img border="0" src="img/peso.gif" width="66" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/iso.gif" width="67" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/bam.gif" width="97" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/member_cga.gif" width="86" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/cgi.gif" width="100" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/t_northa.gif" width="116" height="61">
+		</div>
+		<div class="logoimageLeftBracket">
+			<img border="0" src="img/gce_logo.gif" width="16" height="40">
+		</div>
+	</div><!-- End logobar -->
+        <br/><br><br><br><br><br>
+        
+        
+        <div class="logoimages">
+            <img id = "LeftBracket"  border="0" src="img/left_bracket.gif" width="16" height="40">
+        </div>
+
+        <p class="EnduranceMainFontLarge" id="ETQ">
+	endurance test equipment
+        </p>
+        
+        <div class="logoimageRightBracket">
+            <img border="0" src="img/right_bracket.gif" width="16" height="40">
+        </div>        
+        <p class="EndurancePageMainEvent">
+            Enter the Test Parameters as per the suggestions:
+        </p>
+        <br>
+        </div>
+        <div id='d1' style="position:relative; top:-22px; left:200px; z-index:1; color:#0000FF">  
+            <canvas id ="canvasParamEntryMain" width = "400" height = "200">       
+            </canvas>
+        </div>         
+        
+   	
+	
+        <input type ="Text" name ="TestPressure" id = 'idTestParam' readonly value = "15 bars" maxlength="20" style=" width: 280px;font-family: 'Trebuchet MS';color: #C1CEC7;background: transparent;font-size: 230%;position: relative;top: -150px;left:300px;z-index: 2;border: #C7FF32;" >
+        <br><br>
+        <div id='divCvsBackArrow' style="position:relative; top:-150px; left:0px; z-index:1">  
+        <canvas id ="canvasBackArrow" width = "50" height = "40"
+                    onmouseover="SetBackArrowFocused('canvasBackArrow')"                 
+                    onmouseout="SetBackArrowDefocused('canvasBackArrow')"
+                    onmouseup ="LoadPage('index.html')"
+                ></canvas>
+        </div>
+          
+        <div id='divCvsExit' style="position:relative; top:-750px; left:1300px; z-index:2">  
+            <canvas id ="canvasExit" width = "20" height = "20"
+                    onmouseover="SetExitArrowFocused('canvasExit')"                 
+                    onmouseout="SetExitArrowDefocused('canvasExit')"
+            >
+            </canvas>
+        </div>        
+
+        <div id ='divCvsSlider' style="position:relative; top:-202px; left:207px; z-index:2"> 
+            <canvas id ="canvasSlider" width = "385" height = "10">
+            </canvas>
+        </div>
+        
+        <div id ='divCvsKnob' style="position:relative; top:-224px; left:307px; z-index:2"> 
+            <canvas id ="canvasKnob" width = "40" height = "30"
+            
+            >
+            </canvas>
+        </div>
+        
+	
+        <input type ="Submit" class="DataEntrySubmitBtn" name ="OKBtn" id ="submitBtn" value = "Ok" style="position:relative; top:-227px; left:490px; z-index:2"
+               
+               onmouseover="ChangeColorOnFocus('submitBtn')"
+               onmouseout="ChangeColorOnDefocus('submitBtn')"
+               onmouseup ="ETParam_SubmitAction('idTestParam')"
+               >
+         <div id ='divIncrementArrow' style="position:relative; top:-332px; left:220px; z-index:2"> 
+            <canvas id ="CanvasIncrementArrow" width = "40" height = "40">
+            </canvas>
+        </div>
+        <div id ='divDecrementArrow' style="position:relative; top:-372px; left:530px; z-index:2;"> 
+            <canvas id ="CanvasDecrementArrow" width = "40" height = "40">
+            </canvas>
+        </div>       
+	
+	<div id='slider' style="position:relative;top: -360px;color:#C1CEC7;left: 220px;width: 350px; "></div>
+	
+	
+        <div id ='divCvsKbd' style="position:relative; top:-270px; left:200px; z-index:2"> 
+         <canvas id ="canvasKbd" width = "530" height = "320">
+        </canvas>
+        </div>
+        
+        <div id ='divCvsTestParam' style="position:relative; top:-760px; left:900px; z-index:2"> 
+        <canvas id ="canvasTestParam" width = "260" height = "120">        
+        </canvas>         
+        </div>
+        	
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.js"><\/script>')</script>
+
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+
+    </body>
+    
+</html>

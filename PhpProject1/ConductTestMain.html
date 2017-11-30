@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Endurance Test -- Tekno Valves</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body onLoad = "SetBackArrowDefocused('canvasBackArrow');
+                    SetExitArrowDefocused('canvasExit');">
+        
+        <div id="maincontent">
+            <div id="logobar">
+            
+		<div class="logoimages">
+			<a title="Tekno Valves" href="index.php"><img border="0" src="img/tekno.gif" width="222" height="65"></a>
+		</div>
+            
+		<div class="logoimages" style="width:25px;">&nbsp;</div>
+		<!--
+		<div class="logoimages">
+			<img border="0" src="img/manak.gif" width="85" height="61">
+		</div>
+		-->    
+		<div class="logoimages">
+			<img border="0" src="img/peso.gif" width="66" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/iso.gif" width="67" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/bam.gif" width="97" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/member_cga.gif" width="86" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/cgi.gif" width="100" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/t_northa.gif" width="116" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/gce_logo.gif" width="91" height="61">
+		</div>
+	</div><!-- End logobar -->
+        <br/><br><br><br><br>
+        
+        
+        <div class="logoimages">
+            <img id = "LeftBracket"  border="0" src="img/left_bracket.gif" width="16" height="40">
+        </div>
+
+        <p class="EnduranceMainFontLarge" id="ETQ">
+            endurance test equipment
+        </p>
+        
+        <div class="logoimageRightBracket">
+            <img border="0" src="img/right_bracket.gif" width="16" height="40">
+        </div>        
+        <p class="EndurancePageMainEvent">
+            Select one of the actions to continue:
+        </p>
+        <br>
+        </div>
+        
+        <button id = "btnConductFreshTest"  
+                onmouseover="focusFunction('btnConductFreshTest','canvasActionDetails');
+                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','To run a fresh test',2,'150% Trebuchet MS')"        
+                    onmouseout="lostFocusFunction('btnConductFreshTest','canvasActionDetails')"
+                    onmouseup ="LoadPage('testParamEntry.html')"
+                    >
+            Conduct a fresh test
+        </button>
+        <div id='d1' style="position:relative; top:-90px; left:700px; z-index:1">  
+        <canvas id ="canvasActionDetails" width = "500" height = "200"></canvas>
+        </div>
+        <div id="d2" style="position:relative; top:-200px; z-index:1">
+        <button id = "btnResumePrevTest"
+                onmouseover="focusFunction('btnResumePrevTest','canvasActionDetails');
+                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','To resume previously paused/incomplete test',2,'150% Trebuchet MS');
+                    SetBackArrowDefocused('canvasBackArrow');
+                    SetExitArrowDefocused('canvasExit');"                           
+                    onmouseout="lostFocusFunction('btnResumePrevTest','canvasActionDetails')" 
+                    onmouseup ="LoadPage('testResume.html')"
+                    >
+            Resume paused/incomplete test
+        </button>
+        </div>   
+        
+                
+        
+        <div id ="toolBtnID" style ="position:relative; top:-90px;left:900px;z-index:2 ">
+            <button id = "btnCustomOperation"
+                    
+                    onmouseover="focusFunction('btnResumePrevTest','canvasActionDetails');
+                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','To Operate individual component separately',2,'150% Trebuchet MS');         
+                    SetCanvasText('canvasActionDetails','**For Trained Professionals ONLY!**',3,'150% Trebuchet MS')"
+                    onmouseout="lostFocusFunction('btnResumePrevTest','canvasActionDetails')"
+                    onmouseup ="LoadPage('ConductTestMain.html')"
+                    >
+                <img border="0" src="img/tools2.bmp" width="50" height="50">
+            </button>
+        </div>
+        <br>
+        
+        <div id='divCvsBackArrow' style="position:relative; top:-150px; left:0px; z-index:1">  
+        <canvas id ="canvasBackArrow" width = "50" height = "40"
+                    onmouseover="SetBackArrowFocused('canvasBackArrow')"                 
+                    onmouseout="SetBackArrowDefocused('canvasBackArrow')"
+                    onmouseup ="LoadPage('index.html')"
+                ></canvas>
+        </div>
+      
+        <div id='divCvsExit' style="position:relative; top:-750px; left:1300px; z-index:2">  
+            <canvas id ="canvasExit" width = "20" height = "20"
+                    onmouseover="SetExitArrowFocused('canvasExit')"                 
+                    onmouseout="SetExitArrowDefocused('canvasExit')"
+            >
+            </canvas>
+        </div>
+        
+        
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.js"><\/script>')</script>
+
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+    </body>
+</html>

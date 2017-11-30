@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+<meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Endurance Test -- Tekno Valves</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/jquery-ui.min.css">
+	<link rel="stylesheet" href="ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="js/jquery-1.12.4.js"></script>
+	<script src="ui/1.12.1/jquery-ui.js"></script> 
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+	<script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script>
+	<script src="js/main.js" type="text/javascript"></script>	
+	<script>
+	    showDatePickerStart();
+	</script>
+	
+	
+	
+	
+    </head>
+    <body onload = "hideDiv('DateDiv');
+		    hideInput('submitBtn2');">
+                <div id="maincontent">
+        
+	<div id="logobar">
+            
+		<div class="logoimages">
+			<a title="Tekno Valves" href="index.php"><img border="0" src="img/tekno.gif" width="222" height="65"></a>
+		</div>
+            
+		<div class="logoimages" style="width:25px;">&nbsp;</div>
+		<!--
+		<div class="logoimages">
+			<img border="0" src="img/manak.gif" width="85" height="61">
+		</div>
+		-->
+		<div class="logoimages">
+			<img border="0" src="img/peso.gif" width="66" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/iso.gif" width="67" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/bam.gif" width="97" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/member_cga.gif" width="86" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/cgi.gif" width="100" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/t_northa.gif" width="116" height="61">
+		</div>
+		<div class="logoimages">
+			<img border="0" src="img/gce_logo.gif" width="91" height="61">
+		</div>
+	</div><!-- End logobar -->
+        <br/><br><br><br><br>
+
+        <div class="logoimages">
+            <img id = "LeftBracket"  border="0" src="img/left_bracket.gif" width="16" height="40">
+        </div>
+
+        <p class="EnduranceMainFontLarge" id="ETQ">
+            endurance test equipment
+        </p>
+        
+        <div class="logoimageRightBracket">
+            <img border="0" src="img/right_bracket.gif" width="16" height="40">
+        </div>        
+	
+	 <p class="EndurancePageMainEvent">
+	     Select the parameter on which to sort records:
+        </p>
+        <br>
+	
+	<div id = "divSortByDate">
+	 <button id = "btnSortByDate"  		
+                onmouseover="focusFunction('btnSortByDate','canvasActionDetails');
+                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','Enter the range of dates',2,'150% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','to generate the list of tests',3,'150% Trebuchet MS');"                  
+                    onmouseout="lostFocusFunction('btnSortByDate','canvasActionDetails');"	    
+                    onmouseup ="DrawCanvasForParamEntry('canvasSortMenu');
+				unHideInput2('submitBtn2');
+				GenRpt_ShowDateSortStart();
+				unhideDiv('DateDiv');
+				showDatePickerStart();">		    
+            By Date	   	    
+        </button>
+	
+	 <button id = "btnSortByConductor"  
+                onmouseover= "focusFunction('btnSortByConductor','canvasActionDetails');
+		    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','Select from the list',2,'150% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','the name of the conductor',3,'150% Trebuchet MS');"                  
+                    onmouseout="lostFocusFunction('btnSortByConductor','canvasActionDetails');"
+                onmouseup ="DrawCanvasForParamEntry('canvasSortMenu');
+			    GenRpt_ShowConductorNames();
+			    hideDiv('DateDiv');
+			    unHideInput2('submitBtn2');">		   
+            By Conductor
+        </button>	
+	
+	 <button id = "btnSortByTestName"  
+                onmouseover="focusFunction('btnSortByTestName','canvasActionDetails');
+                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','Select from the list',2,'150% Trebuchet MS');
+                    SetCanvasText('canvasActionDetails','the Test Names',3,'150% Trebuchet MS');"                  
+                    onmouseout="lostFocusFunction('btnSortByTestName','canvasActionDetails');"
+                    onmouseup ="DrawCanvasForParamEntry('canvasSortMenu');
+				GenRpt_ShowTestNames();
+				hideDiv('DateDiv');
+				unHideInput2('submitBtn2');">		   
+            By Test Name
+        </button>	
+	</div>	
+	<div id="DateDiv" class = "input[type=text]">
+	<p> <input type="text" id="datepicker"></p>    
+	</div>
+	<div id='divCvsActionDtl' class = "classHelperCanvas">  
+        <canvas id ="canvasActionDetails" width = "500" height = "200"></canvas>
+        </div>
+	 <input type ="Submit" class="ViewRptSubmitBtn" name ="OKBtn2" id ="submitBtn2" value = "Ok"  
+               onmouseover="ChangeColorOnFocus('submitBtn2');
+			    CursorModify('submitBtn2','pointer');"
+               onmouseout="ChangeColorOnDefocus('submitBtn2')"
+	       onmouseup ="ViewGenRptOkAction();"
+               >
+	 <!--
+	       onmouseup ="ETParam_SubmitAction('idTestParam')"
+	       -->
+	<!--
+	<div id='d1' style="position:relative; top:-90px; left:200px; z-index:1">  
+        <canvas id ="canvasTestSortMenu" width = "500" height = "200"></canvas>
+        </div>	
+	-->
+	
+	 <div id='d1' class = "classCanvasViewRptParamFrame" >  
+            <canvas id ="canvasSortMenu" width = "500" height = "200">       		
+            </canvas>
+        </div>      
+        
+        
+        <div id='divCvsBackArrow' style="position:relative; top:-150px; left:0px; z-index:1">  
+        <canvas id ="canvasBackArrow" width = "50" height = "40"
+                    onmouseover="SetBackArrowFocused('canvasBackArrow')"                 
+                    onmouseout="SetBackArrowDefocused('canvasBackArrow')"
+                    onmouseup ="LoadPage('index.html')"
+                ></canvas>
+        </div>
+      
+        <div id='divCvsExit' style="position:relative; top:-750px; left:1300px; z-index:2">  
+        <canvas id ="canvasExit" width = "20" height = "20"
+                    onmouseover="SetExitArrowFocused('canvasExit')"                 
+                    onmouseout="SetExitArrowDefocused('canvasExit')"
+        >
+        </canvas>
+        </div> 
+    </body>
+</html>

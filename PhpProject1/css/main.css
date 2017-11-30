@@ -1,0 +1,498 @@
+/*! HTML5 Boilerplate v4.3.0 | MIT License | http://h5bp.com/ */
+
+button{
+    font-family: 'Trebuchet MS';
+    color: #C1CEC7;
+    background: transparent;
+    //background: green;
+    font-size: 230%;
+    position: relative;
+    top: 0px; 
+    left: 200px;
+    text-align: justify;
+    padding: 20px;
+    border: yellow;
+    border-width:thick;
+    border-radius: 10%;
+       
+    //margin: 2px 0 0 0;
+   // padding: 0 20px;
+    //display: inline-block;
+    //box-shadow:#000 4px 4px 5px;
+}
+
+
+
+body {
+	font-size: 12px;
+	font-family:Trebuchet MS,arial;
+	color:#C1CEC7;
+	padding:0px;
+	margin:0px;
+	background:url(../img/pagebg.jpg) no-repeat center center fixed;
+	z-index:-999;
+	-webkit-background-size: cover; /*for webKit*/
+	-moz-background-size: cover; /*Mozilla*/
+	-o-background-size: cover; /*opera*/
+	background-size: cover; /*generic*/
+        overflow: hidden; /*to remove the scroll bars*/
+	
+}
+
+
+html,
+input,
+select,
+textarea {
+    color: #222;
+}
+
+html {
+    font-size: 1em;
+    line-height: 1.4;
+    -ms-content-zooming: none; /* Disables zooming */
+    touch-action: none;   /* Disable any special actions on tap/touch */
+}
+
+
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+audio,
+canvas,
+img,
+video {
+    vertical-align: middle;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.browsehappy {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+.ianet_style { font-size:16pt; color:blue;}
+.ianet_style2 { font-size:36pt; color:gray;}
+.ianet_style3{font-size: 100px; opacity: 0.5}
+.ianet_style4{font-size: 100px; opacity: 0.2}
+.welcome { font-style:italic; color:blue; }
+/* Ianet style for the main labels*/
+.EnduranceMainFontLarge
+{
+    font-family: 'Trebuchet MS';
+    color: #C1CEC7;
+    font-size: 350%;
+    position: relative;
+    top: -10px; 
+    left: 180px;
+    margin: 10px 1px 1px 1px;
+    text-shadow: -1px -1px #222;
+}
+
+.EndurancePageMainEvent
+{
+    font-family: 'Trebuchet MS';
+    color: #C7FF32;
+    font-size: 200%;
+    position: relative;
+    top: 0px; 
+    left: 180px;
+}
+
+.EndurancePageSubEvent
+{
+    font-family: 'Trebuchet MS';
+    color: #C7FF32;
+    font-size: 230%;
+    position: relative;
+    top: 0px; 
+    left: 180px;
+    text-align: justify;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 2px 0 0 0;
+}
+
+.slider{
+    position:relative;
+    top:-22px;
+    left:200px;
+    z-index:1;
+    color:#C1CEC7;
+    border: #C7FF32;
+    
+}
+.DataEntryBoxStyle{
+    font-family: 'Trebuchet MS';
+    color: #C1CEC7;
+    background: transparent;
+    font-size: 230%;
+    position: relative;
+    top: -100px;
+    left: 350px;
+    z-index: 2;
+    width: 10%;
+    //text-align: justify;
+    //padding: 20px;
+   border: #C7FF32;
+    //border-width:thick;
+    //border-radius: 10%; 
+}
+.clasTestParam, .classTestInt, .classCompStatus, .classGraphInletPr, .classGraphOutletPr, .classCycleStatus, .classGraphTorque
+{
+   font-family: 'Trebuchet MS';
+   font-size: 90%;    
+   color: #C1CEC7;
+   background: transparent;
+   border: #C7FF32;
+   position: fixed
+}
+
+.clasTestParam, .classTestInt, .classCompStatus, .classCycleStatus{
+    left: 0;
+}
+
+  .cvsGrInletPr, .cvsGrOutletPr, .cvsGrTq {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+ } 
+
+.clasTestParam{
+ top: 250px;   
+}
+.classTestInt{
+    top: 400px;
+}
+.classCompStatus{
+    top: 550px;
+}
+.classCycleStatus{
+    top: 700px;
+}
+.classGraphInletPr, .classGraphOutletPr,.classGraphTorque{
+    right: 0;
+}
+
+.classGraphInletPr{
+    top: 100px; 
+} 
+.classGraphOutletPr{
+    top: 350px; 
+}
+.classGraphTorque{
+    top: 600px; 
+}
+.DataEntryBoxStyle, .DataEntrySubmitBtn, .DataModificationSubmitBtn, .ViewRptSubmitBtn
+{
+    font-family: 'Trebuchet MS';
+    color: #C1CEC7;
+    background: transparent;
+    font-size: 230%;
+    position: relative;
+    top: -100px;
+    left: 350px;
+    z-index: 2;
+    width: 10%;  
+   border: #C7FF32;
+}
+
+.ViewRptSubmitBtn{
+    top: -50px;
+    left: 650px;
+}
+
+.classCanvasViewRptParamFrame{
+    position:relative;
+    top:-230px;
+    left:200px;
+    z-index:1;
+    color:#0000FF;
+}
+
+.classHelperCanvas{
+    position:relative;
+    top:-100px;
+    left:900px;
+    z-index:1;
+}
+
+
+.classStartBtn,.classEmerStopBtn{
+    font-family: 'Trebuchet MS';
+    font-size: 350%;
+    background: transparent;
+    border: #C7FF32;
+    position: fixed
+}
+
+
+
+.classStartBtn{
+    color: #C1CEC7;
+    bottom: 0;
+    left: 0;
+}
+
+    
+.classEmerStopBtn{
+    color: maroon;
+    bottom: 0;
+    right: 0;
+}
+
+
+.classErrWindow{
+    top: 30%;
+    left: 60%;
+    z-index:2;
+    position: fixed;
+}
+
+
+.DataModificationSubmitBtn{
+    font-size: 100%;
+}
+
+
+.logoimages
+{
+    	margin: 10px 2px 2px 2px;
+	float:left; 
+        position: relative;
+        left: 170px;
+        
+}
+.logoimageLeftBracket
+{
+    	margin: 10px 2px 2px 2px;
+	float:right; 
+        position: relative;
+        left: -70px;
+        top:-68px;
+}
+
+.logoimageRightBracket
+{
+    	margin: 10px 2px 2px 2px;
+	float:right; 
+        position: relative;
+        left: -770px;
+        top:-68px;
+}
+
+.TestPressure
+{
+    margin: 10px 2px 2px 2px;
+    float:right; 
+    position: relative;
+    left: -870px;
+    top:-68px;
+}
+
+input[type=text]{
+  background-color : transparent; 
+  margin: 0px;//Sets the distance from the left at which the object is placed!
+  box-sizing: border-box;
+  font-family: 'Trebuchet MS';
+  font-size: 250%;    
+  color: #C7FF32;
+  background: transparent;
+  border: #C7FF32;
+  position: fixed;
+  left: 350px;
+  top: 450px;   
+  z-index: 10;
+}
+.DateTime
+{
+    position: relative;
+    //left: -870px;
+    //top:-68px;
+}
+
+/* ==========================================================================
+   Media Queries
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+.ir {
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+    *text-indent: -9999px;
+}
+
+.ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%;
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+#divCvsBackArrow
+{ cursor: pointer; }
+#divCvsExit
+{ cursor: pointer; }
+
+
+/* ==========================================================================
+   Print styles
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}#divCvsTestParam {
+
+}
