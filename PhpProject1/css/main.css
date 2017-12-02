@@ -238,15 +238,24 @@ textarea {
 
 .classCanvasViewRptParamFrame{
     position:relative;
-    top:-230px;
+    top:-440px;
     left:200px;
     z-index:1;
     color:#0000FF;
 }
 
+.classCanvasResultList{
+    position:relative;
+    top:-600px;
+    left:200px;
+    z-index:1;
+    color:#0000FF;
+}
+
+
 .classHelperCanvas{
     position:relative;
-    top:-100px;
+    top:-200px;
     left:900px;
     z-index:1;
 }
@@ -281,6 +290,27 @@ textarea {
     left: 60%;
     z-index:2;
     position: fixed;
+}
+
+.classTable{
+    width: 100%;
+    top: -3070px;
+    left: 900px;
+    z-index:2;
+}
+
+.classTableHeader{
+    position:relative;
+    top: -1430px;
+    left: 250px;
+    width: 60%;
+    font-family: 'Trebuchet MS';
+    font-size: 250%;    
+    color: #C7FF32;  
+}
+
+.classTableElement{
+    
 }
 
 

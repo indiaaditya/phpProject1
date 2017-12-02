@@ -24,14 +24,14 @@ and open the template in the editor.
 	<script>
 	    showDatePickerStart();
 	</script>
-	
-	
-	
-	
     </head>
     <body onload = "hideDiv('DateDiv');
-		    hideInput('submitBtn2');">
-                <div id="maincontent">
+		    hideInput('submitBtn2');
+		    ViewGenRptEventAdd();
+		    hideInput('idTestParam');
+		    ClearText('idTestParam');
+		    ">
+    <div id="maincontent">
         
 	<div id="logobar">
             
@@ -97,7 +97,11 @@ and open the template in the editor.
 				unHideInput2('submitBtn2');
 				GenRpt_ShowDateSortStart();
 				unhideDiv('DateDiv');
-				showDatePickerStart();">		    
+				showDatePickerStart();
+				canvasHide('canvasSelectTest');
+				canvasHide('canvasKbd');
+				hideInput('idTestParam');				
+			    ">		    
             By Date	   	    
         </button>
 	
@@ -110,7 +114,14 @@ and open the template in the editor.
                 onmouseup ="DrawCanvasForParamEntry('canvasSortMenu');
 			    GenRpt_ShowConductorNames();
 			    hideDiv('DateDiv');
-			    unHideInput2('submitBtn2');">		   
+			    unHideInput2('submitBtn2');
+			    canvasHide('canvasSelectTest');
+			    canvasKbdDraw('canvasKbd');
+			    canvasKbdFillCharacters('canvasKbd', kbdSmallAlphabets);
+			    unHideInput2('idTestParam');
+			    ClearText('idTestParam');	
+			    ViewGenRptStatus = ViewGenRptGetTestConductor;
+			">		   
             By Conductor
         </button>	
 	
@@ -123,43 +134,55 @@ and open the template in the editor.
                     onmouseup ="DrawCanvasForParamEntry('canvasSortMenu');
 				GenRpt_ShowTestNames();
 				hideDiv('DateDiv');
-				unHideInput2('submitBtn2');">		   
+				unHideInput2('submitBtn2');
+				canvasHide('canvasSelectTest');
+				canvasKbdDraw('canvasKbd');
+				canvasKbdFillCharacters('canvasKbd', kbdSmallAlphabets);
+				unHideInput2('idTestParam');
+				ClearText('idTestParam');
+				ViewGenRptStatus = ViewGenRptGetTestId;
+			    ">		   
             By Test Name
         </button>	
 	</div>	
 	<div id="DateDiv" class = "input[type=text]">
 	<p> <input type="text" id="datepicker"></p>    
 	</div>
+	
 	<div id='divCvsActionDtl' class = "classHelperCanvas">  
         <canvas id ="canvasActionDetails" width = "500" height = "200"></canvas>
         </div>
-	 <input type ="Submit" class="ViewRptSubmitBtn" name ="OKBtn2" id ="submitBtn2" value = "Ok"  
+	
+	<input type ="Submit" class="ViewRptSubmitBtn" name ="OKBtn2" id ="submitBtn2" value = "Ok"  
                onmouseover="ChangeColorOnFocus('submitBtn2');
 			    CursorModify('submitBtn2','pointer');"
                onmouseout="ChangeColorOnDefocus('submitBtn2')"
 	       onmouseup ="ViewGenRptOkAction();"
-               >
-	 <!--
-	       onmouseup ="ETParam_SubmitAction('idTestParam')"
-	       -->
-	<!--
-	<div id='d1' style="position:relative; top:-90px; left:200px; z-index:1">  
-        <canvas id ="canvasTestSortMenu" width = "500" height = "200"></canvas>
-        </div>	
-	-->
+        >
+	<input type ="Text" name ="ConductorTestName" id = 'idTestParam' readonly value = "" maxlength="20" style=" width: 280px;font-family: 'Trebuchet MS';color: #C1CEC7;background: transparent;font-size: 230%;position: relative;top: -80px;left:140px;z-index: 2;border: #C7FF32;" > 
 	
-	 <div id='d1' class = "classCanvasViewRptParamFrame" >  
+	<div id='divCvsActionDtl' class = "classHelperCanvas">  
+        <canvas id ="canvasActionDetails" width = "500" height = "200"></canvas>
+        </div> 
+	
+	<div id='d1' class = "classCanvasViewRptParamFrame" >  
             <canvas id ="canvasSortMenu" width = "500" height = "200">       		
             </canvas>
         </div>      
+	
+	
+	<div id ='divCvsResultList' class = "classCanvasResultList">
+	    <canvas id ="canvasSelectTest" width = "1200" height = "500">       		
+            </canvas>
+	</div>
         
         
         <div id='divCvsBackArrow' style="position:relative; top:-150px; left:0px; z-index:1">  
         <canvas id ="canvasBackArrow" width = "50" height = "40"
                     onmouseover="SetBackArrowFocused('canvasBackArrow')"                 
                     onmouseout="SetBackArrowDefocused('canvasBackArrow')"
-                    onmouseup ="LoadPage('index.html')"
-                ></canvas>
+                    onmouseup ="LoadPage('index.html')">			
+	</canvas>
         </div>
       
         <div id='divCvsExit' style="position:relative; top:-750px; left:1300px; z-index:2">  
@@ -169,5 +192,21 @@ and open the template in the editor.
         >
         </canvas>
         </div> 
+	
+	<div id ='divCvsKbd' style="position:relative; top:-1070px; left:900px; z-index:2"> 
+         <canvas id ="canvasKbd" width = "530" height = "320">
+	     
+        </canvas>
+        </div>
+	<div id ='divTbl1' >
+	     <table class = "classTableHeader">
+		 <tr>
+		     <th>Sr.no</th>
+		     <th>Test ID</th>
+		     <th>Test Conductor</th>
+		     <th>Result</th>
+		 </tr>
+	     </table>
+	</div>
     </body>
 </html>

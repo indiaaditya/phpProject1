@@ -496,8 +496,6 @@ function testParamEntryEventAdd()
     document.getElementById("canvasKbd").addEventListener("click", ETparamEntryGetKBdClickCoordinates, false);//Put the brackets to the function name and get screwed for next 6 hours!!!
     document.getElementById("canvasKbd").addEventListener("mousedown", canvasKbdGlowButton,false);
     document.getElementById("canvasKbd").addEventListener("mouseup", canvasKbdDeglowButton,false);
-    //document.getElementById("canvasKbd").addEventListener("touchstart", canvasKbdGlowButton,false);
-    //document.getElementById("canvasKbd").addEventListener("touchend", canvasKbdDeglowButton,false);
     document.getElementById("canvasKbd").addEventListener("contextmenu", function(e) { e.preventDefault(); }, false);
    // document.getElementById("canvasTestParam").addEventListener("click", ETparamEntryGetParamSelectedClickCoordinates, false);
     //Up Arrow
@@ -1405,6 +1403,11 @@ function ChangeColorOnDefocus(ItemId)
     lclId.style.color = "#C1CEC7";
 }
 
+function ClearText(ItemID){
+    lclID = document.getElementById(ItemID);
+    lclID.value = '';
+}
+
 function ChangeFontAndColorOnDefocus(ItemId,fontSize,fontColor)
 {
     lclId = document.getElementById(ItemId);
@@ -1719,10 +1722,7 @@ function ETPARAMENTRY_showSelectedParameterCanvas(varParameterToShow)
             strCanETSet_TestConductor = ETSet_TestConductor;
             SetCanvasText('canvasTestParam', "Test Conductor:", 8, '145% Trebuchet MS');
             SetCanvasTextWithOffsets('canvasTestParam', ETSet_TestConductor, 9, '145% Trebuchet MS', -20, 5);
-	    
-	    
-	    //ShowIconInCanvas('canvasTestParam','/PhpProject1/img/Edit-Disable.ico',240, 40);	    
-	
+	   
 	    //alert("C1");
 	    var xArray = [10,10,10,10,10,10,10];
 	    var yArray = [60,100,140,180,220,260,300];
@@ -3993,10 +3993,6 @@ function convertHalfMsecToHHMMSS_String(vHalfSec)
 
 
 
-
-
-
-
 function GraphInletAdd(){
     var varToDisplay = 0;
     GrInletDisplayedSampleCnt++;
@@ -4078,16 +4074,35 @@ function ViewGenRptOkAction(){
 	case ViewGenRptGetStartDate:
 	    //Get the input from the Input
 	    dbQStartDate = document.getElementById('datepicker').value;
-	    alert("This is the start Date" + dbQStartDate);
+	    //alert("This is the start Date" + dbQStartDate);
 	    GenRpt_ShowDateSortEnd();
+	    ViewGenRptStatus = ViewGenRptGetEndDate;
 	break;
 	case ViewGenRptGetEndDate:
 	    dbQEndDate = document.getElementById('datepicker').value;
-	    alert("This is the end Date" + dbQEndDate);
+	    //alert("This is the end Date" + dbQEndDate);
+	    canvasHide('canvasSortMenu');
+	    //Hide Pushbutton
+	    hideInput('submitBtn2');
+	    //Hide TextBox
+	    hideDiv('DateDiv');
+	    //show canvasSelectTest 
+	    DrawCanvasForParamEntry('canvasSelectTest');
 	break;
 	case ViewGenRptGetTestConductor:
+	    canvasKbdHide();
+	    canvasHide('canvasSortMenu');
+	    hideInput('submitBtn2');
+	    hideInput('idTestParam');
+	    DrawCanvasForParamEntry('canvasSelectTest');
+	    
 	break;
 	case ViewGenRptGetTestId:
+	    canvasKbdHide();
+	    canvasHide('canvasSortMenu');
+	    hideInput('submitBtn2');
+	    hideInput('idTestParam');
+	    DrawCanvasForParamEntry('canvasSelectTest');
 	break;
 	default:
 	    ViewGenRptStatus = 0;
@@ -4097,10 +4112,13 @@ function ViewGenRptOkAction(){
 
 function showDatePickerStart(){
     dpStart = $( "#datepicker" );
+    dbQStartDate = "";
     dpStart.datepicker({
 	dateFormat: "dd-mm-yy"});
     dpStart.datepicker();
     dpStart.datepicker('setDate','+0');
+    dpStart.datepicker("option", "maxDate", '0');
+    dpStart.datepicker("option", "minDate", '1-11-2017');
     dpStart.datepicker('show');
 }
 
@@ -4110,8 +4128,16 @@ function showDatePickerEnd(){
     dpEnd.datepicker({
 	dateFormat: "dd-mm-yy"});
     dpEnd.datepicker();
-    dpEnd.datepicker('setDate','-1');
-    dpEnd.datepicker("option", "maxDate", dbQStartDate);
+    dpEnd.datepicker('setDate','0');
+    dpEnd.datepicker("option", "minDate", dbQStartDate);
+    dpEnd.datepicker("option", "maxDate", '0');
     dpEnd.datepicker('show');
     
+}
+
+function ViewGenRptEventAdd(){
+    document.getElementById("canvasKbd").addEventListener("click", ETparamEntryGetKBdClickCoordinates, false);//Put the brackets to the function name and get screwed for next 6 hours!!!
+    document.getElementById("canvasKbd").addEventListener("mousedown", canvasKbdGlowButton,false);
+    document.getElementById("canvasKbd").addEventListener("mouseup", canvasKbdDeglowButton,false);
+    document.getElementById("canvasKbd").addEventListener("contextmenu", function(e) { e.preventDefault(); }, false);
 }
