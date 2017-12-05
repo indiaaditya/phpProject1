@@ -14,7 +14,6 @@ button{
     border: yellow;
     border-width:thick;
     border-radius: 10%;
-       
     //margin: 2px 0 0 0;
    // padding: 0 20px;
     //display: inline-block;
@@ -35,8 +34,7 @@ body {
 	-moz-background-size: cover; /*Mozilla*/
 	-o-background-size: cover; /*opera*/
 	background-size: cover; /*generic*/
-        overflow: hidden; /*to remove the scroll bars*/
-	
+        overflow: hidden; /*to remove the scroll bars*/	
 }
 
 
@@ -51,10 +49,13 @@ html {
     font-size: 1em;
     line-height: 1.4;
     -ms-content-zooming: none; /* Disables zooming */
-    touch-action: none;   /* Disable any special actions on tap/touch */
+   // touch-action: none;   /* Disable any special actions on tap/touch */
 }
 
-
+table tbody tr:hover {
+    background-color: orange;
+    cursor: pointer;
+}
 
 ::-moz-selection {
     background: #b3d4fc;
@@ -246,8 +247,8 @@ textarea {
 
 .classCanvasResultList{
     position:relative;
-    top:-600px;
-    left:200px;
+    top:-560px;
+    left:50px;
     z-index:1;
     color:#0000FF;
 }
@@ -296,26 +297,80 @@ textarea {
     width: 100%;
     top: -3070px;
     left: 900px;
+    //align: "left";
     z-index:2;
 }
 
-.classTableHeader{
+.classTableHeader1{
+    width: 100%;
     position:relative;
     top: -1430px;
-    left: 250px;
-    width: 60%;
+    left: 0px;
     font-family: 'Trebuchet MS';
-    font-size: 250%;    
+    font-size: 180%;    
     color: #C7FF32;  
+    float: left;
 }
 
-.classTableElement{
+.classTableHeader2{
+    width: 55%;
+    position:relative;
+    top: -1430px;
+    left: 0px;
+    font-family: 'Trebuchet MS';
+    font-size: 180%;    
+    color: #C7FF32;  
+    float: left;
+}
+
+.classTableHeader3{
+    width: 55%;
+    position:relative;
+    top: -1430px;
+    left: 0px;
+    font-family: 'Trebuchet MS';
+    font-size: 180%;    
+    color: #C7FF32;  
+    float: left;
+}
+
+.classTableHeader4{
+    width: 55%;
+    position:relative;
+    top: -1430px;
+    left: 0px;
+    font-family: 'Trebuchet MS';
+    font-size: 180%;    
+    color: #C7FF32;  
+    float: left;
+}
+
+.classTableElement,.classTableElementHilight {
+    width: 100%;
+    position:relative;
+    top: -1430px;
+    left: 100px;
+    font-family: 'Trebuchet MS';
+    font-size: 180%; 
+    //float: left;
+    color: #C1CEC7;
     
 }
 
+.classTableElementHilight{
+    color: #C7FF32;
+}
 
 .DataModificationSubmitBtn{
     font-size: 100%;
+}
+
+.tblScroll{
+    /*
+    overflow:scroll;
+    height:10000px;
+    */
+
 }
 
 

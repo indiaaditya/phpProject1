@@ -30,6 +30,9 @@ and open the template in the editor.
 		    ViewGenRptEventAdd();
 		    hideInput('idTestParam');
 		    ClearText('idTestParam');
+		    hideDiv('divTbl1');
+		    SetBackArrowDefocused('canvasBackArrow');
+		    SetExitArrowDefocused('canvasExit');
 		    ">
     <div id="maincontent">
         
@@ -100,7 +103,8 @@ and open the template in the editor.
 				showDatePickerStart();
 				canvasHide('canvasSelectTest');
 				canvasHide('canvasKbd');
-				hideInput('idTestParam');				
+				hideInput('idTestParam');
+				hideDiv('divTbl1');
 			    ">		    
             By Date	   	    
         </button>
@@ -121,6 +125,13 @@ and open the template in the editor.
 			    unHideInput2('idTestParam');
 			    ClearText('idTestParam');	
 			    ViewGenRptStatus = ViewGenRptGetTestConductor;
+			    hideDiv('divTbl1');
+			    var strData1 = new Array(5);
+			    strData1[0] = '5';
+			    strData1[1] = 'tst07';
+			    strData1[2] = 'Assa';
+			    strData1[3] = 'Success';
+			    AddElementToTable('tblTestList',4,strData1);
 			">		   
             By Conductor
         </button>	
@@ -141,6 +152,14 @@ and open the template in the editor.
 				unHideInput2('idTestParam');
 				ClearText('idTestParam');
 				ViewGenRptStatus = ViewGenRptGetTestId;
+				hideDiv('divTbl1');
+				var strData1 = new Array(5);
+				strData1[0] = '5';
+				strData1[1] = 'tst07';
+				strData1[2] = 'Assa';
+				strData1[3] = 'Success';
+				AddElementToTable('tblTestList',4,strData1);
+				GlowRowOnTable('tblTestList',1,1);
 			    ">		   
             By Test Name
         </button>	
@@ -172,12 +191,12 @@ and open the template in the editor.
 	
 	
 	<div id ='divCvsResultList' class = "classCanvasResultList">
-	    <canvas id ="canvasSelectTest" width = "1200" height = "500">       		
+	    <canvas id ="canvasSelectTest" width = "1450" height = "500">       		
             </canvas>
 	</div>
         
         
-        <div id='divCvsBackArrow' style="position:relative; top:-150px; left:0px; z-index:1">  
+        <div id='divCvsBackArrow' style="position:relative; top:-650px; left:0px; z-index:1">  
         <canvas id ="canvasBackArrow" width = "50" height = "40"
                     onmouseover="SetBackArrowFocused('canvasBackArrow')"                 
                     onmouseout="SetBackArrowDefocused('canvasBackArrow')"
@@ -185,7 +204,7 @@ and open the template in the editor.
 	</canvas>
         </div>
       
-        <div id='divCvsExit' style="position:relative; top:-750px; left:1300px; z-index:2">  
+        <div id='divCvsExit' style="position:relative; top:-1430px; left:1300px; z-index:2">  
         <canvas id ="canvasExit" width = "20" height = "20"
                     onmouseover="SetExitArrowFocused('canvasExit')"                 
                     onmouseout="SetExitArrowDefocused('canvasExit')"
@@ -198,14 +217,25 @@ and open the template in the editor.
 	     
         </canvas>
         </div>
-	<div id ='divTbl1' >
-	     <table class = "classTableHeader">
-		 <tr>
-		     <th>Sr.no</th>
-		     <th>Test ID</th>
-		     <th>Test Conductor</th>
-		     <th>Result</th>
-		 </tr>
+	<div id ='divTbl1' class ="tblScroll">
+	     <table id = 'tblTestList' class = "classTable" >
+		 <col style="width:5%">
+		 <col style="width:10%">
+		 <col style="width:10%">
+		 <col style="width:10%">
+		 <thead>
+		     <tr>
+			 <th><span class ="classTableHeader1">Sr.no</span></th>
+			 <th><span class ="classTableHeader2">Test ID</span></th>
+			 <th><span class ="classTableHeader3">Test Conductor</span></th>
+			 <th><span class ="classTableHeader4">Result</span></th>
+		     </tr>
+		 </thead>
+		 
+
+		 
+		<tbody>
+		</tbody>
 	     </table>
 	</div>
     </body>

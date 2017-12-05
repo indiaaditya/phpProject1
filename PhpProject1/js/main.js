@@ -4087,22 +4087,24 @@ function ViewGenRptOkAction(){
 	    //Hide TextBox
 	    hideDiv('DateDiv');
 	    //show canvasSelectTest 
-	    DrawCanvasForParamEntry('canvasSelectTest');
+	    //DrawCanvasForParamEntry('canvasSelectTest');
+	    unhideDiv('divTbl1');
 	break;
 	case ViewGenRptGetTestConductor:
 	    canvasKbdHide();
 	    canvasHide('canvasSortMenu');
 	    hideInput('submitBtn2');
 	    hideInput('idTestParam');
-	    DrawCanvasForParamEntry('canvasSelectTest');
-	    
+	    //DrawCanvasForParamEntry('canvasSelectTest');
+	    unhideDiv('divTbl1');
 	break;
 	case ViewGenRptGetTestId:
 	    canvasKbdHide();
 	    canvasHide('canvasSortMenu');
 	    hideInput('submitBtn2');
 	    hideInput('idTestParam');
-	    DrawCanvasForParamEntry('canvasSelectTest');
+	    //DrawCanvasForParamEntry('canvasSelectTest');
+	    unhideDiv('divTbl1');
 	break;
 	default:
 	    ViewGenRptStatus = 0;
@@ -4140,4 +4142,35 @@ function ViewGenRptEventAdd(){
     document.getElementById("canvasKbd").addEventListener("mousedown", canvasKbdGlowButton,false);
     document.getElementById("canvasKbd").addEventListener("mouseup", canvasKbdDeglowButton,false);
     document.getElementById("canvasKbd").addEventListener("contextmenu", function(e) { e.preventDefault(); }, false);
+    //document.getElementById().addEventListener("mouseover",alert('over'),false);
+    //var tbl = document.getElementById("tblTestList");
+    //tbl.rows[index]
+    
+}
+
+
+function AddElementToTable(tableId,cellsToInsert,strData){
+    // Find a <table> element with id="myTable":
+    var cell = new Array(cellsToInsert);
+    var table = document.getElementById(tableId);
+    // Create an empty <tr> element and add it to the 1st position of the table:
+    var row = table.insertRow(-1);
+    row.className = 'classTableElement';
+    //Add Cells as per the required number
+    for(var i = 0; i < cellsToInsert; i++){
+	cell[i] = row.insertCell();	
+    }
+    for(var i = 0; i < cellsToInsert; i++){
+	cell[i].innerHTML = strData[i];
+    }
+}
+
+
+function GlowRowOnTable(tableId,rowNumber,bHilight){
+	var tbl = document.getElementById(tableId);
+	var lclRow = tbl.getElementsByTagName('tr');
+	if(bHilight === 1)
+		lclRow.className.replace('classTableElementHilight');
+	else
+		lclRow.className.replace('classTableElement');
 }
