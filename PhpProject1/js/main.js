@@ -366,6 +366,9 @@ var strET_Test_Status = "";
 var vET_TestStatusUpdateStausFlag = 0;
 
 
+var vTableRowElements, vTableRowElementsDeglow;
+var vTableDisplayedFlag = 0;
+
 
 
  var GrInletconfig = {
@@ -4096,7 +4099,10 @@ function ViewGenRptOkAction(){
 	    hideInput('submitBtn2');
 	    hideInput('idTestParam');
 	    //DrawCanvasForParamEntry('canvasSelectTest');
-	    unhideDiv('divTbl1');
+		unhideDiv('divTbl1');
+		//ViewGenRptRowEventAdd();
+		//event.stopImmediatePropagation();
+		AddEvents();
 	break;
 	case ViewGenRptGetTestId:
 	    canvasKbdHide();
@@ -4104,7 +4110,8 @@ function ViewGenRptOkAction(){
 	    hideInput('submitBtn2');
 	    hideInput('idTestParam');
 	    //DrawCanvasForParamEntry('canvasSelectTest');
-	    unhideDiv('divTbl1');
+		unhideDiv('divTbl1');
+		AddEventForTableRows('tblScroll');
 	break;
 	default:
 	    ViewGenRptStatus = 0;
@@ -4141,15 +4148,13 @@ function ViewGenRptEventAdd(){
     document.getElementById("canvasKbd").addEventListener("click", ETparamEntryGetKBdClickCoordinates, false);//Put the brackets to the function name and get screwed for next 6 hours!!!
     document.getElementById("canvasKbd").addEventListener("mousedown", canvasKbdGlowButton,false);
     document.getElementById("canvasKbd").addEventListener("mouseup", canvasKbdDeglowButton,false);
-    document.getElementById("canvasKbd").addEventListener("contextmenu", function(e) { e.preventDefault(); }, false);
-    //document.getElementById().addEventListener("mouseover",alert('over'),false);
-    //var tbl = document.getElementById("tblTestList");
-    //tbl.rows[index]
-    
+	document.getElementById("canvasKbd").addEventListener("contextmenu", function(e) { e.preventDefault(); }, false);
+	//vTableRowElements = document.getElementsByClassName("classTableElement classTableElementHilight");
+	//AddEventForTableRows('tblTestList');    
 }
 
 
-function AddElementToTable(tableId,cellsToInsert,strData){
+function AddElementToTable(tableId,cellsToInsert,strData,rowNum){
     // Find a <table> element with id="myTable":
     var cell = new Array(cellsToInsert);
     var table = document.getElementById(tableId);
@@ -4157,20 +4162,78 @@ function AddElementToTable(tableId,cellsToInsert,strData){
     var row = table.insertRow(-1);
     row.className = 'classTableElement';
     //Add Cells as per the required number
-    for(var i = 0; i < cellsToInsert; i++){
-	cell[i] = row.insertCell();	
-    }
-    for(var i = 0; i < cellsToInsert; i++){
-	cell[i].innerHTML = strData[i];
-    }
+    for(var i = 0; i < cellsToInsert; i++)
+		cell[i] = row.insertCell();	
+    for(var i = 0; i < cellsToInsert; i++)
+		cell[i].innerHTML = strData[i];
+	//row.addEventListener("onmouseover",alert("A"),false);	
+	//row.addEventListener("onmouseover",GlowRowOnTable('tblTestList',rowNum,1),false);
+	//alert("Length" + vTableRowElements.length);
+	//vTableRowElementsDull.atta
+	//vTableRowElementsDull.addEventListener("mouseover",alert("ok"),false);
 }
 
 
 function GlowRowOnTable(tableId,rowNumber,bHilight){
+	//rowNumber = rowNumber ;//This is to avoid the Header row
 	var tbl = document.getElementById(tableId);
-	var lclRow = tbl.getElementsByTagName('tr');
-	if(bHilight === 1)
-		lclRow.className.replace('classTableElementHilight');
-	else
-		lclRow.className.replace('classTableElement');
+	if(tbl.rows.length > 1){
+		//alert("Ithey aalo" + tbl.rows.length);
+		var lclRow = tbl.rows[rowNumber];
+		if(bHilight === 1){
+			lclRow.className = "classTableElementHilight";
+			//lclRow.addEventListener("onmouseout",GlowRowOnTable('tblTestList',lclCntr,0),false);		
+		}
+		else{
+			lclRow.className = "classTableElement";
+			//lclRow.addEventListener("onmouseover",GlowRowOnTable('tblTestList',lclCntr,1),false);
+			//lclRow.addEventListener("click",ActionOnMouseOver(),false);
+		}
+	}
+}
+
+
+function ViewGenRptRowEventAddOnOver(){
+	alert("Over");
+	vTableRowElements = document.getElementsByClassName('classTableElement');
+	for(var lclCntr = 0; lclCntr < vTableRowElements.length; lclCntr++){
+		vTableRowElements[lclCntr].addEventListener("onmouseover",GlowRowOnTable('tblTestList',lclCntr,1),false);	
+	}	
+}
+
+function ViewGenRptRowEventAddOnOut(){
+	alert("Out");
+	vTableRowElementsDeglow = document.getElementsByClassName('classTableElementHilight');
+	for(var lclCntr = 0; lclCntr < vTableRowElementsDeglow.length; lclCntr++){
+		vTableRowElementsDeglow[lclCntr].addEventListener("onmouseout",GlowRowOnTable('tblTestList',lclCntr,0),false);	
+	}
+}	 
+
+function ActionOnMouseOver(){
+	//alert('A');
+	//if(event.currentTarget)
+	alert(event.target);
+}
+
+function AddEventForTableRows(tableId){
+	vTableRowElements = document.getElementsByClassName("classTableElement");
+	alert("Total ele:" + vTableRowElements.length);
+	vTableDisplayedFlag = 1;
+}
+
+function AddEvents(){
+	
+	if(vTableDisplayedFlag == 1){
+		var lclCntr = 0;
+		for(lclCntr = 0; lclCntr < vTableRowElements.length; lclCntr++){
+			//vTableRowElements[lclCntr].addEventListener("click",GlowRowOnTable('tblTestList',lclCntr,1),false);
+			vTableRowElements[lclCntr].addEventListener("click",alert('A'),false);
+		}
+
+	}
+	/*
+	document.body.addEventListener("click",function(event) {
+		  alert("Clicked ");
+	  });
+	  */
 }

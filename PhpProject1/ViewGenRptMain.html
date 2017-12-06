@@ -32,7 +32,7 @@ and open the template in the editor.
 		    ClearText('idTestParam');
 		    hideDiv('divTbl1');
 		    SetBackArrowDefocused('canvasBackArrow');
-		    SetExitArrowDefocused('canvasExit');
+			SetExitArrowDefocused('canvasExit');
 		    ">
     <div id="maincontent">
         
@@ -131,7 +131,7 @@ and open the template in the editor.
 			    strData1[1] = 'tst07';
 			    strData1[2] = 'Assa';
 			    strData1[3] = 'Success';
-			    AddElementToTable('tblTestList',4,strData1);
+			    AddElementToTable('tblTestList',4,strData1,1);
 			">		   
             By Conductor
         </button>	
@@ -154,12 +154,38 @@ and open the template in the editor.
 				ViewGenRptStatus = ViewGenRptGetTestId;
 				hideDiv('divTbl1');
 				var strData1 = new Array(5);
+				strData1[0] = '1';
+				strData1[1] = 'tst07';
+				strData1[2] = 'Assa';
+				strData1[3] = 'Success';
+				AddElementToTable('tblTestList',4,strData1,1);
+				strData1[0] = '2';
+				strData1[1] = 'tst07';
+				strData1[2] = 'Assa';
+				strData1[3] = 'Success';
+				AddElementToTable('tblTestList',4,strData1,2);
+				strData1[0] = '3';
+				strData1[1] = 'tst07';
+				strData1[2] = 'Assa';
+				strData1[3] = 'Success';
+				AddElementToTable('tblTestList',4,strData1,3);
+				strData1[0] = '4';
+				strData1[1] = 'tst07';
+				strData1[2] = 'Assa';
+				strData1[3] = 'Success';
+				AddElementToTable('tblTestList',4,strData1,4);
 				strData1[0] = '5';
 				strData1[1] = 'tst07';
 				strData1[2] = 'Assa';
 				strData1[3] = 'Success';
-				AddElementToTable('tblTestList',4,strData1);
-				GlowRowOnTable('tblTestList',1,1);
+				AddElementToTable('tblTestList',4,strData1,5);
+				strData1[0] = '6';
+				strData1[1] = 'tst08';
+				strData1[2] = 'Assa';
+				strData1[3] = 'Success';
+				AddElementToTable('tblTestList',4,strData1,5);
+				
+				
 			    ">		   
             By Test Name
         </button>	
@@ -218,7 +244,7 @@ and open the template in the editor.
         </canvas>
         </div>
 	<div id ='divTbl1' class ="tblScroll">
-	     <table id = 'tblTestList' class = "classTable" >
+		 <table id = 'tblTestList' class = "classTable">
 		 <col style="width:5%">
 		 <col style="width:10%">
 		 <col style="width:10%">
