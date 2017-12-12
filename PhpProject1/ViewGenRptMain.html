@@ -20,10 +20,8 @@ and open the template in the editor.
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
 	<script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
 	<script src="js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script>
-	<script src="js/main.js" type="text/javascript"></script>	
-	<script>
-	    showDatePickerStart();
-	</script>
+	
+
     </head>
     <body onload = "hideDiv('DateDiv');
 		    hideInput('submitBtn2');
@@ -131,7 +129,8 @@ and open the template in the editor.
 			    strData1[1] = 'tst07';
 			    strData1[2] = 'Assa';
 			    strData1[3] = 'Success';
-			    AddElementToTable('tblTestList',4,strData1,1);
+				AddElementToTable('tblTestList',4,strData1);
+				
 			">		   
             By Conductor
         </button>	
@@ -142,50 +141,49 @@ and open the template in the editor.
                     SetCanvasText('canvasActionDetails','Select from the list',2,'150% Trebuchet MS');
                     SetCanvasText('canvasActionDetails','the Test Names',3,'150% Trebuchet MS');"                  
                     onmouseout="lostFocusFunction('btnSortByTestName','canvasActionDetails');"
-                    onmouseup ="DrawCanvasForParamEntry('canvasSortMenu');
-				GenRpt_ShowTestNames();
-				hideDiv('DateDiv');
-				unHideInput2('submitBtn2');
-				canvasHide('canvasSelectTest');
-				canvasKbdDraw('canvasKbd');
-				canvasKbdFillCharacters('canvasKbd', kbdSmallAlphabets);
-				unHideInput2('idTestParam');
-				ClearText('idTestParam');
-				ViewGenRptStatus = ViewGenRptGetTestId;
-				hideDiv('divTbl1');
-				var strData1 = new Array(5);
-				strData1[0] = '1';
-				strData1[1] = 'tst07';
-				strData1[2] = 'Assa';
-				strData1[3] = 'Success';
-				AddElementToTable('tblTestList',4,strData1,1);
-				strData1[0] = '2';
-				strData1[1] = 'tst07';
-				strData1[2] = 'Assa';
-				strData1[3] = 'Success';
-				AddElementToTable('tblTestList',4,strData1,2);
-				strData1[0] = '3';
-				strData1[1] = 'tst07';
-				strData1[2] = 'Assa';
-				strData1[3] = 'Success';
-				AddElementToTable('tblTestList',4,strData1,3);
-				strData1[0] = '4';
-				strData1[1] = 'tst07';
-				strData1[2] = 'Assa';
-				strData1[3] = 'Success';
-				AddElementToTable('tblTestList',4,strData1,4);
-				strData1[0] = '5';
-				strData1[1] = 'tst07';
-				strData1[2] = 'Assa';
-				strData1[3] = 'Success';
-				AddElementToTable('tblTestList',4,strData1,5);
-				strData1[0] = '6';
-				strData1[1] = 'tst08';
-				strData1[2] = 'Assa';
-				strData1[3] = 'Success';
-				AddElementToTable('tblTestList',4,strData1,5);
-				
-				
+					onmouseup ="DrawCanvasForParamEntry('canvasSortMenu');
+					console.log('A');
+					GenRpt_ShowTestNames();
+					hideDiv('DateDiv');
+					unHideInput2('submitBtn2');
+					canvasHide('canvasSelectTest');
+					canvasKbdDraw('canvasKbd');
+					canvasKbdFillCharacters('canvasKbd', kbdSmallAlphabets);
+					unHideInput2('idTestParam');
+					ClearText('idTestParam');
+					ViewGenRptStatus = ViewGenRptGetTestId;
+					hideDiv('divTbl1');
+					var strData1 = new Array(5);
+					strData1[0] = '1';
+					strData1[1] = 'tst07';
+					strData1[2] = 'Assa';
+					strData1[3] = 'Success';
+					AddElementToTable('tblTestList',4,strData1);
+					strData1[0] = '2';
+					strData1[1] = 'tst07';
+					strData1[2] = 'Assa';
+					strData1[3] = 'Success';
+					AddElementToTable('tblTestList',4,strData1);
+					strData1[0] = '3';
+					strData1[1] = 'tst07';
+					strData1[2] = 'Assa';
+					strData1[3] = 'Success';
+					AddElementToTable('tblTestList',4,strData1);
+					strData1[0] = '4';
+					strData1[1] = 'tst07';
+					strData1[2] = 'Assa';
+					strData1[3] = 'Success';
+					AddElementToTable('tblTestList',4,strData1);
+					strData1[0] = '5';
+					strData1[1] = 'tst07';
+					strData1[2] = 'Assa';
+					strData1[3] = 'Success';
+					AddElementToTable('tblTestList',4,strData1);
+					strData1[0] = '6';
+					strData1[1] = 'tst08';
+					strData1[2] = 'Assa';
+					strData1[3] = 'Success';
+					AddElementToTable('tblTestList',4,strData1);	
 			    ">		   
             By Test Name
         </button>	
@@ -222,14 +220,7 @@ and open the template in the editor.
 	</div>
         
         
-        <div id='divCvsBackArrow' style="position:relative; top:-650px; left:0px; z-index:1">  
-        <canvas id ="canvasBackArrow" width = "50" height = "40"
-                    onmouseover="SetBackArrowFocused('canvasBackArrow')"                 
-                    onmouseout="SetBackArrowDefocused('canvasBackArrow')"
-                    onmouseup ="LoadPage('index.html')">			
-	</canvas>
-        </div>
-      
+       
         <div id='divCvsExit' style="position:relative; top:-1430px; left:1300px; z-index:2">  
         <canvas id ="canvasExit" width = "20" height = "20"
                     onmouseover="SetExitArrowFocused('canvasExit')"                 
@@ -239,30 +230,35 @@ and open the template in the editor.
         </div> 
 	
 	<div id ='divCvsKbd' style="position:relative; top:-1070px; left:900px; z-index:2"> 
-         <canvas id ="canvasKbd" width = "530" height = "320">
+        <canvas id ="canvasKbd" width = "530" height = "320">
 	     
         </canvas>
         </div>
-	<div id ='divTbl1' class ="tblScroll">
-		 <table id = 'tblTestList' class = "classTable">
-		 <col style="width:5%">
-		 <col style="width:10%">
-		 <col style="width:10%">
-		 <col style="width:10%">
-		 <thead>
-		     <tr>
-			 <th><span class ="classTableHeader1">Sr.no</span></th>
-			 <th><span class ="classTableHeader2">Test ID</span></th>
-			 <th><span class ="classTableHeader3">Test Conductor</span></th>
-			 <th><span class ="classTableHeader4">Result</span></th>
-		     </tr>
-		 </thead>
-		 
+	
+	<div id='divCvsBackArrow' style="position:fixed; bottom:0; left:0; z-index:1">  
+			<canvas id ="canvasBackArrow" width = "50" height = "40"
+						onmouseover="SetBackArrowFocused('canvasBackArrow');"                 
+						onmouseout="SetBackArrowDefocused('canvasBackArrow');"
+						onmouseup= "AddEventsToTableForEachRow('tblTestList');"			
+						>			
+		</canvas>
+		</div>
 
-		 
-		<tbody>
-		</tbody>
-	     </table>
-	</div>
+		<div id ='divTbl1'style="position:relative; top:-1450px; left: 200px;">
+			<table id = 'tblTestList'>
+				<thead class = "classTableHeader">
+					<tr>
+						<th class = "classTableHeader1">Sr.no</th>
+						<th class = "classTableHeader2">Test ID</th>
+						<th class = "classTableHeader3">Test Conductor</th>
+						<th class = "classTableHeader4">Result</th>
+					</tr>
+				</thead>
+			</table>
+		</div>		
+
+
+	
+	<script src="js/main.js" type="text/javascript"></script>
     </body>
 </html>

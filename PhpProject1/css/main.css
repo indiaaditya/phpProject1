@@ -49,13 +49,10 @@ html {
     font-size: 1em;
     line-height: 1.4;
     -ms-content-zooming: none; /* Disables zooming */
-   // touch-action: none;   /* Disable any special actions on tap/touch */
+   /* touch-action: none;   /* Disable any special actions on tap/touch */
 }
 
-table tbody tr:hover {
-    background-color: orange;
-    cursor: pointer;
-}
+
 
 ::-moz-selection {
     background: #b3d4fc;
@@ -167,11 +164,11 @@ textarea {
     left: 350px;
     z-index: 2;
     width: 10%;
-    //text-align: justify;
-    //padding: 20px;
+    /*text-align: justify;*/
+    /*padding: 20px;*/
    border: #C7FF32;
-    //border-width:thick;
-    //border-radius: 10%; 
+    /*border-width:thick;*/
+    /*border-radius: 10%; */
 }
 .clasTestParam, .classTestInt, .classCompStatus, .classGraphInletPr, .classGraphOutletPr, .classCycleStatus, .classGraphTorque
 {
@@ -294,84 +291,150 @@ textarea {
 }
 
 .classTable{
+    /*width: 600px;*/
     width: 100%;
-    top: -3070px;
+    position: relative;
+    top: -1500px;
+    display: table-header-group;
+    /*vertical-align:top;*/
+    vertical-align: middle;
+   
+    /*top: -3070px;
     left: 900px;
-    //align: "left";
-    z-index:2;
+    align: "left";
+    z-index:2;*/
 }
 
-.classTableHeader1{
-    width: 100%;
-    position:relative;
+.classTableHeader{
+    display:table-header-group;
+    width: 800px;
+   /* position:relative;
     top: -1430px;
-    left: 0px;
+    left: 0px;*/
     font-family: 'Trebuchet MS';
     font-size: 180%;    
     color: #C7FF32;  
     float: left;
+    border: 4px solid; 
+    border-color:#C1CEC7;
 }
 
-.classTableHeader2{
-    width: 55%;
-    position:relative;
+
+
+.classTableHeader1,.td0{
+    width: 100px;
+   /* position:relative;
     top: -1430px;
-    left: 0px;
+    left: 0px;*/
     font-family: 'Trebuchet MS';
-    font-size: 180%;    
+    /*font-size: 100%;    */
     color: #C7FF32;  
     float: left;
+    border: 1px solid; 
+    border-color:transparent;
+    text-align: center;
 }
 
-.classTableHeader3{
-    width: 55%;
-    position:relative;
-    top: -1430px;
-    left: 0px;
-    font-family: 'Trebuchet MS';
-    font-size: 180%;    
-    color: #C7FF32;  
-    float: left;
+.td0{
+    color: #C1CEC7;
+    font-size: 100%;
+    /*left: 100px;*/
 }
 
-.classTableHeader4{
-    width: 55%;
-    position:relative;
+.classTableHeader2,.td1{
+    width: 250px;
+    /*position:relative;
     top: -1430px;
-    left: 0px;
+    left: 0px;*/
     font-family: 'Trebuchet MS';
-    font-size: 180%;    
+    /*font-size: 180%;    */
     color: #C7FF32;  
     float: left;
+    border: 1px solid; 
+    border-color:transparent;
+    text-align: center;
 }
+
+.td1{
+    color: #C1CEC7;
+    font-size: 100%;
+    /*left: 100px;*/
+}
+
+.classTableHeader3,.td2{
+   width: 250px;
+   /* position:relative;
+    top: -1430px;
+    left: 0px;*/
+    font-family: 'Trebuchet MS';
+    /*font-size: 180%;    */
+    color: #C7FF32;  
+    float: left;
+    border: 1px solid; 
+    border-color:transparent;
+    text-align: center;
+}
+
+.td2{
+    color: #C1CEC7;
+    font-size: 100%;
+    /*left: 100px;*/
+}
+
+.classTableHeader4,.td3{
+    width: 150px;
+   /* position:absolute;
+    top: -1430px;
+    left: 0px;*/
+    font-family: 'Trebuchet MS';
+   /* font-size: 180%;    */
+    color: #C7FF32;  
+    float: left;
+    border: 1px solid; 
+    border-color: transparent;
+    text-align: center;
+}
+
+.td3{
+    color: #C1CEC7;
+    font-size: 100%;
+    /*left: 100px;*/
+}
+
 
 .classTableElement,.classTableElementHilight {
     width: 100%;
-    position:relative;
-    top: -1430px;
-    left: 100px;
+    /*position: absolute;*/
+    /*top: 100px;*/
+    /*left: 0px;*/
+    /*width: 1000px;*/
     font-family: 'Trebuchet MS';
-    font-size: 180%; 
-    //float: left;
+    font-size: 100%; 
     color: #C1CEC7;
-    
+    float: left;
 }
+
 
 .classTableElementHilight{
     color: #C7FF32;
+    cursor: pointer; 
 }
 
 .DataModificationSubmitBtn{
     font-size: 100%;
 }
-
+/*
 .tblScroll{
+    width: 20%;
+    table-layout: fixed;
     /*
     overflow:scroll;
     height:10000px;
-    */
+    *
 
 }
+*/
+
 
 
 .logoimages
@@ -411,7 +474,7 @@ textarea {
 
 input[type=text]{
   background-color : transparent; 
-  margin: 0px;//Sets the distance from the left at which the object is placed!
+  margin: 0px;/*//Sets the distance from the left at which the object is placed!*/
   box-sizing: border-box;
   font-family: 'Trebuchet MS';
   font-size: 250%;    
@@ -426,8 +489,8 @@ input[type=text]{
 .DateTime
 {
     position: relative;
-    //left: -870px;
-    //top:-68px;
+    /*left: -870px;*/
+    /*top:-68px;*/
 }
 
 /* ==========================================================================
@@ -507,6 +570,7 @@ input[type=text]{
     *zoom: 1;
 }
 
+
 #divCvsBackArrow
 { cursor: pointer; }
 #divCvsExit
@@ -578,6 +642,7 @@ input[type=text]{
     h3 {
         page-break-after: avoid;
     }
-}#divCvsTestParam {
+}
+#divCvsTestParam{
 
 }

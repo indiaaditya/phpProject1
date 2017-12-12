@@ -5,6 +5,13 @@
  * 
  * 
  */
+
+//ViewGenRpt Vars
+
+var viewGenCurrRow = 0;
+
+
+
 var DelMeCntr = 0;
 var DelMe = 0;
 
@@ -4102,7 +4109,7 @@ function ViewGenRptOkAction(){
 		unhideDiv('divTbl1');
 		//ViewGenRptRowEventAdd();
 		//event.stopImmediatePropagation();
-		AddEvents();
+		//AddEventsToTableForEachRow('tblTestList');
 	break;
 	case ViewGenRptGetTestId:
 	    canvasKbdHide();
@@ -4111,7 +4118,6 @@ function ViewGenRptOkAction(){
 	    hideInput('idTestParam');
 	    //DrawCanvasForParamEntry('canvasSelectTest');
 		unhideDiv('divTbl1');
-		AddEventForTableRows('tblScroll');
 	break;
 	default:
 	    ViewGenRptStatus = 0;
@@ -4154,86 +4160,95 @@ function ViewGenRptEventAdd(){
 }
 
 
-function AddElementToTable(tableId,cellsToInsert,strData,rowNum){
-    // Find a <table> element with id="myTable":
+function AddElementToTable(tableId,cellsToInsert,strData){
+	// Find a <table> element with id="myTable":
+	console.log("Fn. AddElementToTable Begin..")
     var cell = new Array(cellsToInsert);
     var table = document.getElementById(tableId);
     // Create an empty <tr> element and add it to the 1st position of the table:
-    var row = table.insertRow(-1);
-    row.className = 'classTableElement';
+	var row = table.insertRow(-1);
+	row.className = 'classTableElement';
     //Add Cells as per the required number
-    for(var i = 0; i < cellsToInsert; i++)
+    for(var i = 0; i < cellsToInsert; i++){
 		cell[i] = row.insertCell();	
-    for(var i = 0; i < cellsToInsert; i++)
 		cell[i].innerHTML = strData[i];
-	//row.addEventListener("onmouseover",alert("A"),false);	
-	//row.addEventListener("onmouseover",GlowRowOnTable('tblTestList',rowNum,1),false);
-	//alert("Length" + vTableRowElements.length);
-	//vTableRowElementsDull.atta
-	//vTableRowElementsDull.addEventListener("mouseover",alert("ok"),false);
+		switch(i){
+			case 0:
+			cell[0].className = "td0";
+			break;
+			
+			case 1:
+			cell[1].className = "td1";
+			break;
+
+			case 2:
+			cell[2].className = "td2";
+			break;
+
+			case 3:
+			cell[3].className = "td3";
+			break;
+
+			default:
+			console.log("Ye Kahaan Aa gaye Hum...");
+			break;
+		}
+		console.log(cell[i].className);
+	}
 }
 
 
-function GlowRowOnTable(tableId,rowNumber,bHilight){
-	//rowNumber = rowNumber ;//This is to avoid the Header row
+function GlowRowOnTable(tableId,rowNumber){
+	console.log("GlowRowOnTable");
 	var tbl = document.getElementById(tableId);
-	if(tbl.rows.length > 1){
-		//alert("Ithey aalo" + tbl.rows.length);
-		var lclRow = tbl.rows[rowNumber];
-		if(bHilight === 1){
-			lclRow.className = "classTableElementHilight";
-			//lclRow.addEventListener("onmouseout",GlowRowOnTable('tblTestList',lclCntr,0),false);		
-		}
-		else{
-			lclRow.className = "classTableElement";
-			//lclRow.addEventListener("onmouseover",GlowRowOnTable('tblTestList',lclCntr,1),false);
-			//lclRow.addEventListener("click",ActionOnMouseOver(),false);
-		}
+	var rows = tbl.getElementsByTagName("tr");
+	if (rows.length > 0) {
+	  var lclRow = tbl.rows[rowNumber + 1];
+	  var lclClassName = lclRow.className;
+	  //console.log("Class name of the row: " + lclRow.className + "\n");
+	  if (lclClassName !== "") {
+		if (lclRow.className === "classTableElement")
+		  lclRow.className = "classTableElementHilight";
+		else
+		  lclRow.className = "classTableElement";
+	  }
 	}
 }
 
-
-function ViewGenRptRowEventAddOnOver(){
-	alert("Over");
-	vTableRowElements = document.getElementsByClassName('classTableElement');
-	for(var lclCntr = 0; lclCntr < vTableRowElements.length; lclCntr++){
-		vTableRowElements[lclCntr].addEventListener("onmouseover",GlowRowOnTable('tblTestList',lclCntr,1),false);	
-	}	
-}
-
-function ViewGenRptRowEventAddOnOut(){
-	alert("Out");
-	vTableRowElementsDeglow = document.getElementsByClassName('classTableElementHilight');
-	for(var lclCntr = 0; lclCntr < vTableRowElementsDeglow.length; lclCntr++){
-		vTableRowElementsDeglow[lclCntr].addEventListener("onmouseout",GlowRowOnTable('tblTestList',lclCntr,0),false);	
+function AddEventsToTableForEachRow(tableId) {
+	//Get the NodeList
+	console.log("Function Called!");
+	var nodelist = document.querySelectorAll(".classTableElement");
+	var lclCntr = 0;
+	console.log("Elements found:" + nodelist.length);
+	//Set ID's for all the elements
+	var strInloop = "";
+	//This loop sets the ID for each row.
+	console.log("Setting id for each element");
+	for (lclCntr = 0; lclCntr < nodelist.length; lclCntr++) {
+	  strInloop = "tr" + lclCntr;
+	  nodelist[lclCntr].setAttribute("id", strInloop);
 	}
-}	 
-
-function ActionOnMouseOver(){
-	//alert('A');
-	//if(event.currentTarget)
-	alert(event.target);
-}
-
-function AddEventForTableRows(tableId){
-	vTableRowElements = document.getElementsByClassName("classTableElement");
-	alert("Total ele:" + vTableRowElements.length);
-	vTableDisplayedFlag = 1;
-}
-
-function AddEvents(){
-	
-	if(vTableDisplayedFlag == 1){
-		var lclCntr = 0;
-		for(lclCntr = 0; lclCntr < vTableRowElements.length; lclCntr++){
-			//vTableRowElements[lclCntr].addEventListener("click",GlowRowOnTable('tblTestList',lclCntr,1),false);
-			vTableRowElements[lclCntr].addEventListener("click",alert('A'),false);
-		}
-
+	//This loop gets all the elements in an array
+	console.log("Adding Elements to the array");
+	var rowElement = new Array(nodelist.length + 1);
+	for (lclCntr = 0; lclCntr < nodelist.length; lclCntr++) {
+	  strInloop = "tr" + lclCntr;
+	  rowElement[lclCntr] = document.getElementById(strInloop);
+	  console.log("Element[" + lclCntr + "] = " + rowElement[lclCntr]);v
 	}
-	/*
-	document.body.addEventListener("click",function(event) {
-		  alert("Clicked ");
-	  });
-	  */
+  
+
+	//This loop adds events for each element
+	console.log("Adding Events.");
+	for (lclCntr = 0; lclCntr < nodelist.length; lclCntr++){
+	  let closureVar = lclCntr;
+	  rowElement[closureVar].addEventListener("mouseover", function() {
+		GlowRowOnTable('tblTestList', closureVar)
+	  }, false);
+	  rowElement[closureVar].addEventListener("mouseout", function() {
+		GlowRowOnTable('tblTestList', closureVar)
+	  }, false);
+	}
+	console.log("Job Done.")
 }
