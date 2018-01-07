@@ -442,14 +442,20 @@ textarea {
 }
 
 .divClassBtnGenRpt{
-    border-style: dashed;
-    border-color: yellowgreen;
-    position:fixed;
-    bottom: 0;
-    right: 40px;
-    width: 200px;
-    height: 40px;
+    position: fixed;
+    bottom: -40px;
+    right: 150px;
+    width: 280px;
+    height: 100px;
     z-index:2;
+    
+}
+
+.btnClass{
+    text-align: center;
+    font-size: 150%;
+    color: #C1CEC7;
+    background: transparent;
 }
 
 

@@ -247,9 +247,9 @@ var vIntervalId;
 var vInitDepressurizationInterval = 10;	//10 --- 10*500 --- 5000mSec
 var vValveCloseTimeoutInterval = 8;//10 --- 10*500 --- 5000mSec
 var vValveInletPrApplicationInterval = 10; //10 --- 10*500 --- 5000mSec
-var vChargedOutletPressureMonitorInterval = 12;//10 --- 10*500 --- 5000mSec
+var vChargedOutletPressureMonitorInterval = 10;//10 --- 10*500 --- 5000mSec
 var vChargedOutletDischargeInterval = 10;//10 --- 10*500 --- 5000mSec
-var vDischargedOutletMonitorInterval = 12;//10 --- 10*500 --- 5000mSec
+var vDischargedOutletMonitorInterval = 10;//10 --- 10*500 --- 5000mSec
 var vValveOpenTimeoutInterval = 14;//10 --- 10*500 --- 5000mSec
 var vOpenChannelPressureMonitorInterval = 12;//10 --- 10*500 --- 5000mSec
 var vEmergencyStopInterval = 20;//20 --- 20*500 --- 5000mSec
@@ -924,9 +924,6 @@ function canvasSetBackgroundImage(canvasId, urlToImage)	//Not Working!!!
 		lclContext.drawImage(background, 0, 0);
 	};
 }
-
-
-
 
 function SetCanvasHeader(canvasId, strrText, uirLineNum, varFont) {
 	var lclCanvas = document.getElementById(canvasId);
@@ -2343,7 +2340,7 @@ function createAjaxRequest(strVarToDouble, secondVar) {
 	AjaxRequest = new XMLHttpRequest();
 	AjaxRequest.onreadystatechange = function () {
 		//if(AjaxRequest.readyState === 2)
-		console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
+		//console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
 		//alert("Ätleast state Changed, Ready State = " + AjaxRequest.readyState + "Status" + AjaxRequest.status);
 		//if(AjaxRequest.status === 404)
 		//alert("This is the status:" + AjaxRequest.status);             
@@ -2364,7 +2361,7 @@ function AjaxStoreTestParameters(uirTestPressure, uirOpenRotation, frClosingTq, 
 	AjaxRequest = new XMLHttpRequest();
 	AjaxRequest.onreadystatechange = function () {
 		//if(AjaxRequest.readyState === 2)
-		console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
+		//console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
 		//alert("Ätleast state Changed, Ready State = " + AjaxRequest.readyState + "Status" + AjaxRequest.status);
 		//if(AjaxRequest.status === 404)
 		//alert("This is the status:" + AjaxRequest.status);             
@@ -2388,7 +2385,7 @@ function AjaxRetrieveTestParameters() {
 	AjaxRequest.send();
 	AjaxRequest.onreadystatechange = function () {
 		//if(AjaxRequest.readyState === 2)
-		console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
+		//console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
 		//alert("Ätleast state Changed, Ready State = " + AjaxRequest.readyState + "Status" + AjaxRequest.status);
 		//if(AjaxRequest.status === 404)
 		//alert("This is the status:" + AjaxRequest.status);             
@@ -2438,9 +2435,11 @@ function AjaxServoSetStatus(uirSrvo_DesDegOfRtn, uirDirnOfRtn, frSrvo_DesTq) {
 	var urlName = "ServoSetStatus.php?R=" + uirSrvo_DesDegOfRtn + "&S=" + uirDirnOfRtn + "&T=" + frSrvo_DesTq;
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
 	AjaxRequest.onreadystatechange = function () {
 		//if(AjaxRequest.readyState === 2)
-		console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
+		//console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
 		//alert("Ätleast state Changed, Ready State = " + AjaxRequest.readyState + "Status" + AjaxRequest.status);
 		//if(AjaxRequest.status === 404)
 		//alert("This is the status:" + AjaxRequest.status);             
@@ -2454,36 +2453,42 @@ function AjaxServoSetStatus(uirSrvo_DesDegOfRtn, uirDirnOfRtn, frSrvo_DesTq) {
 }
 
 function AjaxServoGetStatus() {
+	console.log("Function Called!");
 	var urlName = "ServoGetStatus.php";
 	var AjaxRequest;
 	var lclString, subString;
 	var lclPosnCntr;
 
 	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
 
 	AjaxRequest.onreadystatechange = function () {
 		console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			lclString = AjaxRequest.responseText;
-			alert("Get Status Response:" + lclString);
+			console.log("Get Status Response:" + lclString);
+			
 			lclPosnCntr = lclString.search(',');
 			subString = lclString.slice(0, lclPosnCntr);
 			srvoActualTq = parseFloat(subString);
-
 			subString = subString + ',';
 			lclString = lclString.replace(subString, '');
-
+			console.log(" SubStr with Tq:" + lclString);
 			lclPosnCntr = lclString.search(',');
 			subString = lclString.slice(0, lclPosnCntr);
 			srvoActualPosn = parseInt(subString);
+			console.log("This is srvoActualPosn:" + srvoActualPosn);
+			console.log(" SubStr with srvoActualPosn:" + lclString);
 
 			subString = subString + ',';
 			lclString = lclString.replace(subString, '');
 
-			lclPosnCntr = lclString.search(',');
-			subString = lclString.slice(0, lclPosnCntr);
-			srvoStatus = parseInt(subString);
-			alert("This is srvoActualPosn" + srvoActualPosn);
+			//lclPosnCntr = lclString.search(',');
+			//subString = lclString.slice(0, lclPosnCntr);
+			console.log("This is what is left of the string:" + lclString);
+			srvoStatus = parseInt(lclString);
+			console.log("This is srvo Status" + srvoStatus);
 		}
 	};
 }
@@ -2499,7 +2504,7 @@ function AjaxSerInterfaceSetDesiredStat(uiDesIsoValve, uiDesInletVentValve, uiDe
 	AjaxRequest.open("Get", urlName, true);
 	AjaxRequest.send();
 	AjaxRequest.onreadystatechange = function () {
-		console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
+		//console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
 		//alert("Ätleast state Changed, Ready State = " + AjaxRequest.readyState + "Status" + AjaxRequest.status);
 		//if(AjaxRequest.status === 404)
 		//alert("This is the status:" + AjaxRequest.status);             
@@ -2834,7 +2839,8 @@ function ExecuteEnduranceTest() {
 			vCycleInProgress = 0;
 			if (vTqCalCntr < 15) {
 				AjaxServoGetStatus();
-				if ((srvoStatus === SERVO_CMD_STAT_UNKNOWN) || (srvoStatus === SERVO_CMD_STAT_COMPLETED)) {
+				console.log("Point where error gen:" + srvoStatus);
+				if (srvoStatus !== SERVO_CMD_STAT_ERR) {
 					//First Check if this is the first calibration or Torque Modification cal!
 					if (vET_Tq_InitialCalDone === 0) {//This indicates that this is the first cycle or the cycle is resumed from a cold start!
 						vAppliedTq = ETSet_UsedClosingTorque - (ETSet_UsedClosingTorque / 5);
@@ -2888,7 +2894,7 @@ function ExecuteEnduranceTest() {
 					vTqPeakPositiveVal = 0;
 					vTqPeakNegativeVal = 0;
 					if (EnduranceTestExecuteCurrrentStat !== vET_Return_Status) {
-						AjaxServoSetStatus((ETSet_OpeningRotation + (ETSet_OpeningRotation / 2)), CW, vAppliedTq);//IF 360 closing pgmd, it will try and go to 360+180 to close the valve!
+						AjaxServoSetStatus((ETSet_OpeningRotation *4), CW, vAppliedTq);//IF 360 closing pgmd, it will try and go to 360*4 to close the valve!
 						vServoDelayCntr = 0;
 						EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR;
 					}
@@ -2920,7 +2926,7 @@ function ExecuteEnduranceTest() {
 			else*/
 			//{	
 			vServoDelayCntr++;
-			if (vServoDelayCntr > 22)   //ToDo: Servo Timeout Error
+			if (vServoDelayCntr > 60)   //ToDo: Servo Timeout Error
 			{
 				//alert("Servo Time Out" + srvoStatus);
 				//alert("Peak Negative Tq:" + vTqPeakNegativeVal);
@@ -2989,7 +2995,7 @@ function ExecuteEnduranceTest() {
 			vReturnVal = ValidatePressure(ET_Inlet_Pressure, ETSet_Pressure, 5, 25);
 			//alert("This is the return Val of Validate Pressure" + vReturnVal);
 			if ((vReturnVal === PRESSURE_OK) || (vReturnVal === PRESSURE_MORE)) {
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_CLOSE_VALVE_BEGIN;
+				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;
 			}
 			else //PRESSURE_LESS
 			{
@@ -3020,7 +3026,7 @@ function ExecuteEnduranceTest() {
 				vReturnVal = PRESSURE_OK;
 			}
 			if ((vReturnVal === PRESSURE_OK) || (vReturnVal === PRESSURE_MORE)) {
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_CLOSE_VALVE_BEGIN;
+				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;
 				ET_ErrorId = 0;
 			}
 			else {//indicates that there is insufficient pressure!
@@ -3034,6 +3040,7 @@ function ExecuteEnduranceTest() {
 			canvasHide('canvasErrWindow');
 			*/
 			break;
+			/*
 		case ETTEST_EXEC_CLOSE_VALVE_BEGIN:
 			vCycleInProgress = 1;
 			vlInletIsolatingDesired = 1;
@@ -3048,8 +3055,8 @@ function ExecuteEnduranceTest() {
 			vET_TestStatusUpdateStausFlag = 1;
 			EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;
 			//alert("I");
-
 			break;
+			*/
 		case ETTEST_EXEC_MONITOR_VALVE_CLOSE:	//ToDO!!!
 			vCycleInProgress = 1;
 			vlInletIsolatingDesired = 1;
@@ -3062,6 +3069,8 @@ function ExecuteEnduranceTest() {
 			else
 				vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
+			strET_Test_Status = "Closing Test Valve";
+			vET_TestStatusUpdateStausFlag = 1;
 			AjaxServoGetStatus();
 			if ((srvoStatus === SERVO_CMD_STAT_UNKNOWN) || (srvoStatus === SERVO_CMD_STAT_COMPLETED)) {
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_STD_ACTION;
@@ -3070,9 +3079,9 @@ function ExecuteEnduranceTest() {
 				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
 				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
 				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
+				break;
 			}
-
-			break;
+			
 
 		case ETTEST_EXEC_VALVE_CLOSE_STD_ACTION:
 			vCycleInProgress = 1;
@@ -3140,6 +3149,7 @@ function ExecuteEnduranceTest() {
 			AjaxServoSetStatus((ETSet_OpeningRotation + (ETSet_OpeningRotation / 2)/**80/100*/), CW, vAppliedTq);
 			EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_MONITOR;
 			break;
+
 		case ETTEST_EXEC_VALVE_CLOSE_MONITOR:
 			vCycleInProgress = 1;
 			vlInletIsolatingDesired = 1;
@@ -3150,7 +3160,11 @@ function ExecuteEnduranceTest() {
 
 			vServoDelayCntr++;
 			AjaxServoGetStatus();
-			if (srvoStatus === SERVO_CMD_STAT_COMPLETED || vServoDelayCntr > 22) {
+			console.log("Servo Status:" + srvoStatus);
+			console.log("vServoDelayCntr:" + vServoDelayCntr);
+			if ((srvoStatus === SERVO_CMD_STAT_COMPLETED) || (vServoDelayCntr > 22)) {
+				//console.log("Servo Status:" + srvoStatus);
+				//console.log("vServoDelayCntr:" + vServoDelayCntr);
 				if (vTqPeakNegativeVal > (0.8 * ETSet_UsedClosingTorque))
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_BEGIN;
 				else {//Indicates Closing Mechanism Failed!
@@ -3169,7 +3183,6 @@ function ExecuteEnduranceTest() {
 			vlOutletExhaustDesired = 0;
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
-
 			strET_Test_Status = "Monitoring External Leakage";
 			vET_TestStatusUpdateStausFlag = 1;
 			EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_MONITOR;
@@ -3182,13 +3195,11 @@ function ExecuteEnduranceTest() {
 			vlOutletExhaustDesired = 0;
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
-
 			vDlyCntr++;
 			if (vDlyCntr > vChargedOutletPressureMonitorInterval) {
 				vDlyCntr = 0;
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_INTERVAL_COMP_ACTION;
 			}
-
 			break;
 		case ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_INTERVAL_COMP_ACTION:
 			vCycleInProgress = 1;
@@ -3197,7 +3208,6 @@ function ExecuteEnduranceTest() {
 			vlOutletExhaustDesired = 0;
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
-
 			//vReturnVal = ValidatePressure(ET_Outlet_Pressure,ET_Inlet_Pressure,2,4);
 			if ((ET_Outlet_Pressure - ET_Inlet_Pressure) > 10) {//Error Condition Jig/Seat Leakage
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_ERROR_ACTION;
@@ -3207,7 +3217,6 @@ function ExecuteEnduranceTest() {
 			else {
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_NORMAL_ACTION;
 			}
-
 			break;
 		case ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_NORMAL_ACTION:
 			vCycleInProgress = 1;
@@ -3216,9 +3225,7 @@ function ExecuteEnduranceTest() {
 			vlOutletExhaustDesired = 0;
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
-
 			EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_DISCHARGE_BEGIN;
-
 			break;
 		case ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_ERROR_ACTION:
 			vCycleInProgress = 1;
@@ -3393,9 +3400,10 @@ function ExecuteEnduranceTest() {
 				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
 				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
 				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
+				break;
 			}
 
-			break;
+			
 		case ETTEST_EXEC_VALVE_OPEN:
 			vCycleInProgress = 1;
 			vlInletIsolatingDesired = 1;
@@ -3407,7 +3415,7 @@ function ExecuteEnduranceTest() {
 			AjaxServoSetStatus(ETSet_OpeningRotation, ACW, ETSet_ClosingTorque + 10);
 			vServoDelayCntr = 0;
 			EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_OPEN;
-			break;
+			//break;
 		case ETTEST_EXEC_MONITOR_VALVE_OPEN:
 			vCycleInProgress = 1;
 			vlInletIsolatingDesired = 1;
@@ -3520,7 +3528,7 @@ function ExecuteEnduranceTest() {
 				vLastCycleInterval = vCurrrentCycleInterval;
 				vCurrrentCycleInterval = 0;
 				vAverageCycleInterval = vTestInterval / CyclesCounter;
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_CLOSE_VALVE_BEGIN;   //Check if this is correct!!!    
+				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;   //Check if this is correct!!!    
 				if (CyclesCounter >= ETSet_Cycles)   //Indicates that the test is complete!!
 				{
 					EnduranceTestExecuteCurrrentStat = ETTEST_CYCLE_COMPLETE_BEGIN;
@@ -3529,7 +3537,7 @@ function ExecuteEnduranceTest() {
 			else {
 
 				ET_DoNotIncrementCycleCntrFlag = 0; //Reset the flag!!
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_CLOSE_VALVE_BEGIN;   //Check if this is correct!!!
+				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;   //Check if this is correct!!!
 			}
 			//alert("Q4");	    
 			break;
@@ -3641,7 +3649,7 @@ function ExecuteEnduranceTest() {
 			EnduranceTestExecuteCurrrentStat = ETTEST_UNKNOWN;
 			break;
 	}
-
+	//console.log(EnduranceTestExecuteCurrrentStat);
 	UpdateValveStatus();
 	ETConduct_ShowHideCanvas('canvasErrWindow');
 	OutletPrGauge.refresh(ET_Outlet_Pressure);
@@ -3976,7 +3984,7 @@ function ViewGenRptEventAdd() {
 
 function AddElementToTable(tableId, cellsToInsert, strData) {
 	// Find a <table> element with id="myTable":
-	console.log("Fn. AddElementToTable Begin..")
+	//console.log("Fn. AddElementToTable Begin..")
 	var cell = new Array(cellsToInsert);
 	var table = document.getElementById(tableId);
 	// Create an empty <tr> element and add it to the 1st position of the table:
@@ -4005,25 +4013,25 @@ function AddElementToTable(tableId, cellsToInsert, strData) {
 				break;
 
 			default:
-				console.log("Ye Kahaan Aa gaye Hum...");
+				//console.log("Ye Kahaan Aa gaye Hum...");
 				break;
 		}
 
-		console.log(cell[i].className);
+		//console.log(cell[i].className);
 	}
 }
 
 
 function GlowRowOnTable(tableId, rowNumber) {
-	console.log("GlowRowOnTable");
+	//console.log("GlowRowOnTable");
 	var tbl = document.getElementById(tableId);
 	var rows = tbl.getElementsByTagName("tr");
 	if (rows.length > 0) {
 		var lclRow = tbl.rows[rowNumber + 1];
 		var lclClassName = lclRow.className;
-		console.log("Class name of the row: " + lclRow.className + "\n");
+		//console.log("Class name of the row: " + lclRow.className + "\n");
 		if (lclClassName !== "") {
-			console.log("Class Name Change begin...");
+			//console.log("Class Name Change begin...");
 			if (lclRow.className === "classTableElement")
 
 				lclRow.className = "classTableElementHilight";
@@ -4031,36 +4039,36 @@ function GlowRowOnTable(tableId, rowNumber) {
 				lclRow.className = "classTableElement";
 		}
 		else {
-			console.log("class Name");
+			//console.log("class Name");
 		}
 	}
-	console.log("Class name of the row: " + lclRow.className + "\n");
+	//console.log("Class name of the row: " + lclRow.className + "\n");
 }
 
 function AddEventsToTableForEachRow(tableId) {
 	//GlowRowOnTable(tableId, 3);
 
 	//Get the NodeList
-	console.log("Function Called!");
+	//console.log("Function Called!");
 	var nodelist = document.querySelectorAll(".classTableElement");
 	var lclCntr = 0;
-	console.log("Elements found:" + nodelist.length);
+	//console.log("Elements found:" + nodelist.length);
 	//Set ID's for all the elements
 	var strInloop = "";
 	//This loop sets the ID for each row.
-	console.log("Setting id for each element");
+	//console.log("Setting id for each element");
 	for (lclCntr = 0; lclCntr < nodelist.length; lclCntr++) {
 		strInloop = "tr" + lclCntr;
-		console.log("str: ", strInloop);
+		//console.log("str: ", strInloop);
 		nodelist[lclCntr].setAttribute("id", strInloop);
 	}
 	//This loop gets all the elements in an array
-	console.log("Adding Elements to the array");
+	//console.log("Adding Elements to the array");
 	var rowElement = new Array(nodelist.length + 1);
 	for (lclCntr = 0; lclCntr < nodelist.length; lclCntr++) {
 		strInloop = "tr" + lclCntr;
 		rowElement[lclCntr] = document.getElementById(strInloop);
-		console.log("Element[" + lclCntr + "] = " + rowElement[lclCntr]);
+		//console.log("Element[" + lclCntr + "] = " + rowElement[lclCntr]);
 	}
 	//This loop adds events for each element
 	//console.log("Adding Events.");
@@ -4072,7 +4080,17 @@ function AddEventsToTableForEachRow(tableId) {
 		rowElement[closureVar].addEventListener("mouseout", function () {
 			GlowRowOnTable('tblTestList', closureVar)
 		}, false);
-		console.log("Adding Events:" + lclCntr);
+		rowElement[closureVar].addEventListener("click", function () {
+			TableRowClickAction();
+		}, false);	
+		//console.log("Adding Events:" + lclCntr);
 	}
-	console.log("Job Done.");
+	//console.log("Job Done.");
+}
+
+function TableRowClickAction(){
+	unhideDiv('divCvsSelected');
+	unhideDiv('divBtnGenRpt');
+	//console.log("ADITYA");
+
 }
