@@ -36,7 +36,7 @@ and open the template in the editor.
 	<script src="js/main.js"></script>
 
     </head>
-     <body onload = "OutletPrGauge = CanvasDrawGauge('OlPrGauge',0,400,8,2,true,'','');		    
+     <body id = "testConductBody" onload = "OutletPrGauge = CanvasDrawGauge('OlPrGauge',0,400,8,2,true,'','');		    
 		     InletPrGauge = CanvasDrawGauge('InletPrGauge',0,400,4,2,true,'Inlet Pressure','');
 		     TqGauge = CanvasDrawGauge('TqGauge',-35,0,7,2,true,'Peak Torque','N-m');
 		     AjaxRetrieveTestParameters();	
@@ -65,7 +65,10 @@ and open the template in the editor.
 			    dataset.pointBackgroundColor = background;
 			    dataset.pointBorderWidth = 1;
 			});	
-		     "
+			hideDiv('divResumeWindow');
+			hideDiv('divAbortWindow');
+			hideDiv('divResumeNowWindow');
+		    "
 		     >
 	 
         <div id="maincontent">
@@ -122,12 +125,7 @@ and open the template in the editor.
         </p>
 	
 	<br><br><br><br><br>
-	
-
-		 
 	 
-	
-		 
 	<input type ="Submit"  class="clasTestParam" name ="TestParam" id ="idTestParam" value = "Parameters"      
 	         onmouseover="ChangeFontAndColorOnFocus('idTestParam','150%','#C7FF32')"
 		 onmouseout="ChangeFontAndColorOnDefocus('idTestParam','90%','#C1CEC7')"
@@ -172,13 +170,15 @@ and open the template in the editor.
 	         onmouseover="ChangeFontAndColorOnFocus('idStartBtn','500%','#C7FF32')"
 		 onmouseout="ChangeFontAndColorOnDefocus('idStartBtn','350%','#C1CEC7')"
 		 onclick ="ExecuteStartStopAction()" 		 
-        >		
+		>		
+		<!--
 	<input type ="Submit" class="classEmerStopBtn" name ="EmergencyBtn" id ="idEmergencyBtn" value = "Emergency Stop"
 	         onmouseover="ChangeFontAndColorOnFocus('idEmergencyBtn','500%','red')"
 		 onmouseout="ChangeFontAndColorOnDefocus('idEmergencyBtn','350%','maroon')"
 		 onmouseup = "ExecuteEmergencyStopAction()"
 		 
-        >	
+		>	
+		-->
 	<!--
 	onmouseup = "clearInterval(vIntervalId)"
 	-->
@@ -239,6 +239,15 @@ and open the template in the editor.
 	 
 	 <div id ="divErrWindow" class="classErrWindow" >
 	     <canvas id="canvasErrWindow" width="600" height="400"></canvas><br />
+	 </div>
+	 <div id = "divResumeWindow" class ="classResumeWindow">
+		<button id = "btnResumeLater" class = "btnResume" onmouseover="ChangeColorOnFocus('btnResumeLater');" onmouseout="ChangeColorOnDefocus('btnResumeLater');">
+			Resume Later
+	 </div>
+	 <div id = "divAbortWindow" class="classAbortWindow">
+		<button id= "btnAbortTest" class = "btnResume" onmouseover="ChangeColorOnFocus('btnAbortTest');" onmouseout="ChangeColorOnDefocus('btnAbortTest');">
+			Abort              
+		</button>
 	 </div>
 	 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.js"><\/script>');</script>
 

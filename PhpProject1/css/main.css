@@ -13,7 +13,7 @@ button{
     padding: 20px;
     border: yellow;
     border-width:thick;
-    border-radius: 10%;
+    /*border-radius: 10%;*/
     /*margin: 2px 0 0 0;*/
     /*padding: 0 20px;*/
     /*display: inline-block;*/
@@ -291,6 +291,20 @@ textarea {
     position: fixed;
 }
 
+.classResumeWindow{
+    top: 92%;
+    left: 5%;
+    z-index:2;
+    position: fixed;
+}
+
+.classAbortWindow{
+    top: 92%;
+    left: 32%;
+    z-index:2;
+    position: fixed;
+}
+
 .classTable{
     /*width: 600px;*/
     width: 100%;
@@ -451,12 +465,19 @@ textarea {
     
 }
 
-.btnClass{
+.btnClass, .btnResume{
     text-align: center;
     font-size: 150%;
     color: #C1CEC7;
     background: transparent;
 }
+
+.btnResume{
+    background: rgba(199,255,0,0.2);
+}
+
+
+
 
 
 
