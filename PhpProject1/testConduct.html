@@ -38,7 +38,8 @@ and open the template in the editor.
     </head>
      <body id = "testConductBody" onload = "OutletPrGauge = CanvasDrawGauge('OlPrGauge',0,400,8,2,true,'','');		    
 		     InletPrGauge = CanvasDrawGauge('InletPrGauge',0,400,4,2,true,'Inlet Pressure','');
-		     TqGauge = CanvasDrawGauge('TqGauge',-35,0,7,2,true,'Peak Torque','N-m');
+			 TqGauge = CanvasDrawGauge('TqGauge',-35,0,7,2,true,'Peak Torque','N-m');
+			 GetTestId_now();
 		     AjaxRetrieveTestParameters();	
 		       $.each(GrInletconfig.data.datasets, function(i, dataset) {
 			    var background = '#C7FF32';
@@ -68,6 +69,7 @@ and open the template in the editor.
 			hideDiv('divResumeWindow');
 			hideDiv('divAbortWindow');
 			hideDiv('divResumeNowWindow');
+			alert('Test id:' + vTestId);
 		    "
 		     >
 	 
