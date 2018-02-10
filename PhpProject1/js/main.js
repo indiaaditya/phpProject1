@@ -233,6 +233,7 @@ var vTestInterval = 0;	//This variable counts the time for which the test has be
 var vLastCycleInterval = 0;//This variable stores the time required for completion of the last cycle
 var vCurrrentCycleInterval = 0;//This variable stores the time required for completion of the current cycle
 var vAverageCycleInterval = 0;//This variable stores the average time required for each cycle.
+var vSampleCntr = 0;
 
 
 //Servo Parameters
@@ -349,6 +350,15 @@ var ET_EmergencyStopCntr = 0;
 var ET_ServoMechErrorCntr = 0;
 var ET_JigLeakageCntr = 0;
 var ET_JigSpindleCntr = 0;
+
+
+var ET_TEST_ID_PARAM_ENTERED = 0;
+var ET_TEST_ID_ACCEPTED = 1;
+var ET_TEST_ID_BEGUN = 2;
+var ET_TEST_ID_PAUSED_BY_USER = 3;
+var ET_TEST_ID_ABORTED_BY_USER = 4;
+var ET_TEST_ID_COMPLETE = 5;
+var ET_TEST_ID_ABORTED_BY_ERROR = 6;
 
 
 
@@ -1615,49 +1625,54 @@ function ETPARAMENTRY_showSelectedParameterCanvas(varParameterToShow) {
 			break;
 
 		case ETPARAMENTRY_TEST_ID_NEW:
-			CanvasModifyWidthHeight('canvasTestParam', 260, 320);
-			DrawCanvasForParamEntry('canvasTestParam');
-			SetCanvasHeader('canvasTestParam', 'Test Parameters Selected:', 1, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_Pressure, 2, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_OpeningRotation, 3, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_ClosingTorque, 4, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_EndTorque, 5, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_Cycles, 6, '145% Trebuchet MS');
-			strCanETSet_TestId = "Test Id:" + ETSet_TestId;
-			SetCanvasText('canvasTestParam', strCanETSet_TestId, 7, '145% Trebuchet MS');
-			canvasKbdDraw('canvasKbd');
-			canvasKbdFillCharacters('canvasKbd', kbdSmallAlphabets);
-			break;
+			if (ETSet_TestId.length > 0) {
+				CanvasModifyWidthHeight('canvasTestParam', 260, 320);
+				DrawCanvasForParamEntry('canvasTestParam');
+				SetCanvasHeader('canvasTestParam', 'Test Parameters Selected:', 1, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_Pressure, 2, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_OpeningRotation, 3, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_ClosingTorque, 4, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_EndTorque, 5, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_Cycles, 6, '145% Trebuchet MS');
+				strCanETSet_TestId = "Test Id:" + ETSet_TestId;
+				SetCanvasText('canvasTestParam', strCanETSet_TestId, 7, '145% Trebuchet MS');
+				canvasKbdDraw('canvasKbd');
+				canvasKbdFillCharacters('canvasKbd', kbdSmallAlphabets);
+			}
+	
+		break;
 
 
 		case ETPARAMENTRY_TEST_CONDUCTOR_NEW:
 			//alert("C0");
-			CanvasModifyWidthHeight('canvasTestParam', 260, 360);
-			DrawCanvasForParamEntry('canvasTestParam');
-			//These statements added here to allow updating of the variables
-			strCanETSet_Pressure = "Test Pressure:" + ETSet_Pressure.toString() + " bars";
-			strCanETSet_OpeningRotation = "Open Rotation:" + ETSet_OpeningRotation.toString() + " Degrees";
-			strCanETSet_ClosingTorque = "Closing Torque:" + ETSet_ClosingTorque.toString() + " N-m";
-			strCanETSet_EndTorque = "End Torque:" + ETSet_EndTorque.toString() + " N-m";
-			strCanETSet_Cycles = "Test Cyles:" + ETSet_Cycles.toString();
-			strCanETSet_TestId = "Test Id:" + ETSet_TestId;
-			SetCanvasHeader('canvasTestParam', 'Test Parameters Selected:', 1, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_Pressure, 2, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_OpeningRotation, 3, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_ClosingTorque, 4, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_EndTorque, 5, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_Cycles, 6, '145% Trebuchet MS');
-			SetCanvasText('canvasTestParam', strCanETSet_TestId, 7, '145% Trebuchet MS');
-			strCanETSet_TestConductor = ETSet_TestConductor;
-			SetCanvasText('canvasTestParam', "Test Conductor:", 8, '145% Trebuchet MS');
-			SetCanvasTextWithOffsets('canvasTestParam', ETSet_TestConductor, 9, '145% Trebuchet MS', -20, 5);
+			if (ETSet_TestConductor.length > 0) {
+				CanvasModifyWidthHeight('canvasTestParam', 260, 360);
+				DrawCanvasForParamEntry('canvasTestParam');
+				//These statements added here to allow updating of the variables
+				strCanETSet_Pressure = "Test Pressure:" + ETSet_Pressure.toString() + " bars";
+				strCanETSet_OpeningRotation = "Open Rotation:" + ETSet_OpeningRotation.toString() + " Degrees";
+				strCanETSet_ClosingTorque = "Closing Torque:" + ETSet_ClosingTorque.toString() + " N-m";
+				strCanETSet_EndTorque = "End Torque:" + ETSet_EndTorque.toString() + " N-m";
+				strCanETSet_Cycles = "Test Cyles:" + ETSet_Cycles.toString();
+				strCanETSet_TestId = "Test Id:" + ETSet_TestId;
+				SetCanvasHeader('canvasTestParam', 'Test Parameters Selected:', 1, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_Pressure, 2, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_OpeningRotation, 3, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_ClosingTorque, 4, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_EndTorque, 5, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_Cycles, 6, '145% Trebuchet MS');
+				SetCanvasText('canvasTestParam', strCanETSet_TestId, 7, '145% Trebuchet MS');
+				strCanETSet_TestConductor = ETSet_TestConductor;
+				SetCanvasText('canvasTestParam', "Test Conductor:", 8, '145% Trebuchet MS');
+				SetCanvasTextWithOffsets('canvasTestParam', ETSet_TestConductor, 9, '145% Trebuchet MS', -20, 5);
 
-			//alert("C1");
-			var xArray = [10, 10, 10, 10, 10, 10, 10];
-			var yArray = [60, 100, 140, 180, 220, 260, 300];
-			showSingleIconMultipleTimesInCanvas('canvasTestParam', '/PhpProject1/img/Edit-Disable.ico', xArray, yArray);
-			//showSingleIconMultipleTimesInCanvas('canvasTestParam','/PhpProject1/img/Edit-Disable.ico',xArray, yArray);			
-			TPE_EditIconActiveFlag = 1;
+				//alert("C1");
+				var xArray = [10, 10, 10, 10, 10, 10, 10];
+				var yArray = [60, 100, 140, 180, 220, 260, 300];
+				showSingleIconMultipleTimesInCanvas('canvasTestParam', '/PhpProject1/img/Edit-Disable.ico', xArray, yArray);
+				//showSingleIconMultipleTimesInCanvas('canvasTestParam','/PhpProject1/img/Edit-Disable.ico',xArray, yArray);			
+				TPE_EditIconActiveFlag = 1;
+			}
 			break;
 		default:
 			break;
@@ -2578,7 +2593,6 @@ function AjaxSerInterfaceSetDesiredStat(uiDesIsoValve, uiDesInletVentValve, uiDe
 			subString = lclString.slice(0, lclPosnCntr);
 			vTqTempVal = parseFloat(subString);
 
-
 			//change negative to positive
 			var vlclNeg;
 			if (vTqTempVal < 0)
@@ -2611,11 +2625,38 @@ function AjaxGetTestId(uiTestDate, uiTestMonth, uiTestYear, uiHour, uiMinute){
 			vTestId = parseInt(AjaxRequest.responseText);
 			console.log("E::" + vTestId);
 		}
-
 	};
-	
-	
 }
+
+function AjaxUpdateTestStatus(uiTestId,uiDesiredStatus){
+	console.log("Calling Ajax Update Test Status");
+	var urlName = "UpdateTestStatus.php?q=" + uiTestId + "&r=" + uiDesiredStatus;
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Test Id Update Success");
+		}
+	};
+}
+
+function AjaxStoreTestRecord(){
+	console.log("Calling Ajax Store Test Record");
+	var date = new Date();
+	var urlName = "StoreTestRcd.php?b=" + vTestId + "&c=" + CyclesCounter + "&d=" + ET_Inlet_Pressure + "&e=" + ET_Outlet_Pressure + "&f=" + ETSet_UsedClosingTorque + "&g=" + vAppliedTq + "&h=" + vlInletIsolatingStat + "&i=" + vlInletVentingStat + "&j=" + vlOutletExhaustStat + "&k=" + srvoStatus + "&l=" + date.getDate() + "&m=" + (date.getMonth() + 1)+ "&n=" + date.getFullYear() + "&o=" + date.getHours() + "&p=" + date.getMinutes() + "&q=" + date.getSeconds() + "&r=" + vSampleCntr;
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Store Test Record Complete");
+		}
+	};
+}
+
 
 function PrTransConvertCurrentToPressure(uirCurrentModbusReading) {
 	var vlclPrReading;
@@ -2750,6 +2791,7 @@ function ExecuteEnduranceTest() {
 			vlOutletExhaustDesired = 1;
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
+			vSampleCntr = 0;	//Reset the sample counter
 			vDlyCntr = 0;   //Reset Delay	    
 			ETSet_UsedClosingTorque = ETSet_ClosingTorque;
 			vTqMaxTolerance = (ETSet_UsedClosingTorque * 3) / 100;
@@ -3714,6 +3756,7 @@ function ExecuteEnduranceTest() {
 
 	CalculateInletPressure();
 	CalculateOutletPressure();
+	AjaxStoreTestRecord();
 
 	if (vEmergencyStopFlag === 1)
 		EnduranceTestExecuteCurrrentStat = ETTEST_EMERGENCY_STOP_BEGIN;
@@ -3796,6 +3839,8 @@ function ExecuteStartStopAction() {
 		hideDiv('divResumeWindow');
 		hideDiv('divAbortWindow');
 		ChangeText('idStartBtn', '350%', '#C1CEC7', strStringToChange);
+		AjaxUpdateTestStatus(vTestId,ET_TEST_ID_BEGUN);
+
 	}
 	else {
 		boolETTestRunFlag = 0;
@@ -3804,6 +3849,7 @@ function ExecuteStartStopAction() {
 		unhideDiv('divResumeWindow');
 		unhideDiv('divAbortWindow');
 		ChangeText('idStartBtn', '350%', '#C1CEC7', strStringToChange);
+		AjaxUpdateTestStatus(vTestId,ET_TEST_ID_PAUSED_BY_USER);
 	}
 }
 
@@ -4146,13 +4192,6 @@ function TableRowClickAction() {
 
 function GetTestId_now(){
 	var date = new Date();
-
-	console.log("Day:" + date.getDate() );
-	console.log("Month:" + date.getMonth() );
-	console.log("Year:" + date.getFullYear());
-	console.log("Hours:" + date.getHours());
-	console.log("Minutes:" + date.getMinutes());
-
 	AjaxGetTestId(date.getDate(), (date.getMonth() + 1), date.getFullYear(), date.getHours(), date.getMinutes());
 	//alert("This is the ID:" +  vTestId);
 }
