@@ -323,7 +323,7 @@ textarea {
 
 .classTableHeader{
     display:table-header-group;
-    width: 800px;
+    width: 1200px;
    /* position:relative;
     top: -1430px;
     left: 0px;*/
@@ -417,6 +417,26 @@ textarea {
     /*left: 100px;*/
 }
 
+.classTableHeader5,.td4{
+    width: 150px;
+   /* position:absolute;
+    top: -1430px;
+    left: 0px;*/
+    font-family: 'Trebuchet MS';
+   /* font-size: 180%;    */
+    color: #C7FF32;  
+    float: left;
+    /*border: 1px solid; 
+    border-color: transparent;*/
+    text-align: center;
+}
+
+.td4{
+    color: #C1CEC7;
+    font-size: 100%;
+    /*left: 100px;*/
+}
+
 .classTableElement,.classTableElementHilight {
     width: 100%;
     font-family: 'Trebuchet MS';
@@ -437,7 +457,7 @@ textarea {
 
 .tblScroll{
     overflow-y:auto;
-    width: 800;
+    width: 1200px;
     height: 350px;
     position:relative;
     top:-1420px;

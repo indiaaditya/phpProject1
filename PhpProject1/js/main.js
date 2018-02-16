@@ -2629,6 +2629,7 @@ function AjaxGetTestId(uiTestDate, uiTestMonth, uiTestYear, uiHour, uiMinute){
 }
 
 function AjaxUpdateTestStatus(uiTestId,uiDesiredStatus){
+	var urlName = ;
 	console.log("Calling Ajax Update Test Status");
 	var urlName = "UpdateTestStatus.php?q=" + uiTestId + "&r=" + uiDesiredStatus;
 	var AjaxRequest;
@@ -2643,8 +2644,10 @@ function AjaxUpdateTestStatus(uiTestId,uiDesiredStatus){
 }
 
 function AjaxStoreTestRecord(){
+	var urlName = ;
 	console.log("Calling Ajax Store Test Record");
 	var date = new Date();
+	vSampleCntr++;
 	var urlName = "StoreTestRcd.php?b=" + vTestId + "&c=" + CyclesCounter + "&d=" + ET_Inlet_Pressure + "&e=" + ET_Outlet_Pressure + "&f=" + ETSet_UsedClosingTorque + "&g=" + vAppliedTq + "&h=" + vlInletIsolatingStat + "&i=" + vlInletVentingStat + "&j=" + vlOutletExhaustStat + "&k=" + srvoStatus + "&l=" + date.getDate() + "&m=" + (date.getMonth() + 1)+ "&n=" + date.getFullYear() + "&o=" + date.getHours() + "&p=" + date.getMinutes() + "&q=" + date.getSeconds() + "&r=" + vSampleCntr;
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
@@ -2656,6 +2659,140 @@ function AjaxStoreTestRecord(){
 		}
 	};
 }
+
+function AjaxGetCountOfTestBetnDates(){
+	var urlName = ;
+	console.log("Calling AjaxGetCountOfTestBetnDates"); 
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Count of Test Betn. Dates Complete");
+		}
+	};
+
+}
+
+function AjaxGetSpecificRcdOfTestBetnDates(){
+	var urlName = ;
+	console.log("Calling AjaxGetSpecificRcdOfTestBetnDates"); 
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Sp. Rcd Test Betn. Dates Complete");
+		}
+	};	
+
+}
+
+function AjaxGetCountOfTestByConductors(){
+	var urlName = ;
+	console.log("Calling AjaxGetCountOfTestByConductors");
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Sp. Rcd Test Betn. Dates Complete");
+		}
+	};	
+
+}
+function AjaxGetSpecificRcdOfTestByConductors(){
+	var urlName = ;
+	console.log("Calling AjaxGetSpecificRcdOfTestByConductors");
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Sp. Rcd Test Betn. Dates Complete");
+		}
+	};	
+
+}
+
+function AjaxGetCountOfTestById(){
+	var urlName = ;
+	console.log("Calling AjaxGetCountOfTestById"); 
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Sp. Rcd Test Betn. Dates Complete");
+		}
+	};	
+
+}
+function AjaxGetSpecificRcdOfId(){
+	var urlName = ;
+	console.log("Calling AjaxGetSpecificRcdOfId"); 
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Sp. Rcd Test Betn. Dates Complete");
+		}
+	};	
+
+}
+function AjaxGetCountOfIncompleteTests(){
+	var urlName = ;
+	console.log("Calling AjaxGetCountOfIncompleteTests"); 
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Sp. Rcd Test Betn. Dates Complete");
+		}
+	};	
+
+}
+function AjaxGetSpecificRcdOfIncompleteTests(){
+	var urlName = ;
+	console.log("Calling AjaxGetSpecificRcdOfIncompleteTests");
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Get Sp. Rcd Test Betn. Dates Complete");
+		}
+	};	
+
+
+
+}
+function AjaxGenerateExcelRpt(){
+	var urlName = ;
+	console.log("Calling AjaxGenerateExcelRpt"); 
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function (){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("GenerateExcelRpt Complete");
+		}
+	};	
+
+
+}
+
 
 
 function PrTransConvertCurrentToPressure(uirCurrentModbusReading) {
@@ -4107,6 +4244,10 @@ function AddElementToTable(tableId, cellsToInsert, strData) {
 				cell[3].className = "td3";
 				break;
 
+			case 4:
+				cell[4].className = "td4";
+				break;
+				
 			default:
 				//console.log("Ye Kahaan Aa gaye Hum...");
 				break;
