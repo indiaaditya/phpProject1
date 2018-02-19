@@ -402,6 +402,18 @@ var vDB_TestDate = new Array(100);
 var vDB_Result = new Array(100);
 var vDB_srNo = new Array(100);
 
+var vDB_Q_stDate = 0;
+var vDB_Q_stMonth = 0;
+var vDB_Q_stYear = 0;
+var vDB_Q_EndDate = 0;
+var vDB_Q_EndMonth = 0;
+var vDB_Q_EndYear = 0;
+var vDB_TempDate, vDB_TempMonth, vDB_TempYear;
+var vDB_AjaxExecuted = 0;
+
+var vDBTableRow = new Array(6);
+
+
 
 
 
@@ -2673,25 +2685,30 @@ function AjaxStoreTestRecord(){
 }
 
 function AjaxGetCountOfTestBetnDates(uiStartDate,uiStartMonth,uiStartYear,uiEndDate,uiEndMonth,uiEndYear){
+	var retVar;
 	var urlName = "GetTestCntByDate.php?d="+uiStartDate+"&m="+uiStartMonth+"&y="+uiStartYear+"&D="+uiEndDate+"&M="+uiEndMonth+"&Y="+ uiEndYear;
 	console.log("Calling AjaxGetCountOfTestBetnDates"); 
+	console.log("URL Name:" + urlName);
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
 	AjaxRequest.open("Get", urlName, true);
 	AjaxRequest.send();
 	AjaxRequest.onreadystatechange = function (){
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
-			console.log("Get Count of Test Betn. Dates Complete");
 			vDB_cnt = parseInt(AjaxRequest.responseText);
-			console.log("Cnt betn Dates:" + vDB_cnt);
-			vDB_TestIdNum.length = vDB_cnt;
-			vDB_TestConductor.length = vDB_cnt;
-			vDB_TestIdStr.length = vDB_cnt;
-			vDB_TestDate.length = vDB_cnt;
-			vDB_Result.length = vDB_cnt;
-			vDB_srNo.length = vDB_cnt;
-		}
+			console.log("Get Count of Test Betn. Dates Complete");
+		}	
 	};
+}
+
+function resizeTableArray(uirArrSize){	
+	vDB_TestIdNum.length = uirArrSize;
+	vDB_TestConductor.length = uirArrSize;
+	vDB_TestIdStr.length = uirArrSize;
+	vDB_TestDate.length = uirArrSize;
+	vDB_Result.length = uirArrSize;
+	vDB_srNo.length = uirArrSize;
+	console.log("length of array:" + vDB_TestIdNum.length);
 
 }
 
@@ -2700,19 +2717,27 @@ function AjaxGetSpecificRcdOfTestBetnDates(uiStartDate,uiStartMonth,uiStartYear,
 	console.log("Calling AjaxGetSpecificRcdOfTestBetnDates"); 
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
-	AjaxRequest.open("Get", urlName, true);
-	AjaxRequest.send();
+	AjaxRequest.timeout = 2000;
 	AjaxRequest.onreadystatechange = function (){
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			console.log("Get Sp. Rcd Test Betn. Dates Complete");
 			vDB_str = AjaxRequest.responseText;
 			//ToDo: Extract Individual Element
+			ExtractTestParamsFromString(vDB_str,uiRcdNum);
+			for(var lcl = 0; lcl < vDBTableRow.length; lcl++){
+				console.log(vDBTableRow[lcl]);
+			}
+
+			//AddElementToTable(tableId, cellsToInsert, strData);
 		}
 	};	
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
 
 }
 
 function AjaxGetCountOfTestByConductors(strCondName){
+	var retVar = 0;
 	var urlName = "GetTestCntByTestConductor.php?c=" + strCondName ;
 	console.log("Calling AjaxGetCountOfTestByConductors");
 	var AjaxRequest;
@@ -2722,16 +2747,17 @@ function AjaxGetCountOfTestByConductors(strCondName){
 	AjaxRequest.onreadystatechange = function (){
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			console.log("Get Rcd count by conductor Name");
-			vDB_cnt = parseInt(AjaxRequest.responseText);
-			console.log("Records by Conductor:" + vDB_cnt);
-			vDB_TestIdNum.length = vDB_cnt;
-			vDB_TestConductor.length = vDB_cnt;
-			vDB_TestIdStr.length = vDB_cnt;
-			vDB_TestDate.length = vDB_cnt;
-			vDB_Result.length = vDB_cnt;
-			vDB_srNo.length = vDB_cnt;
+			retVar = parseInt(AjaxRequest.responseText);
+			console.log("Records by Conductor:" + retVar);
+			vDB_TestIdNum.length = retVar;
+			vDB_TestConductor.length = retVar;
+			vDB_TestIdStr.length = retVar;
+			vDB_TestDate.length = retVar;
+			vDB_Result.length = retVar;
+			vDB_srNo.length = retVar;
 		}
 	};	
+	return retVar;
 
 }
 function AjaxGetSpecificRcdOfTestByConductors(strCondName,uirRcdNum){
@@ -2753,6 +2779,7 @@ function AjaxGetSpecificRcdOfTestByConductors(strCondName,uirRcdNum){
 }
 
 function AjaxGetCountOfTestById(strrTestId){
+	var retVar = 0;
 	var urlName = "GetTestCntByTestName.php?c="+strrTestId;
 	console.log("Calling AjaxGetCountOfTestById"); 
 	var AjaxRequest;
@@ -2762,16 +2789,17 @@ function AjaxGetCountOfTestById(strrTestId){
 	AjaxRequest.onreadystatechange = function (){
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			console.log("Get Rcd Cnt of Test by Id");
-			vDB_cnt = parseInt(AjaxRequest.responseText);
-			console.log("Count of rcds by conductor:" + vDB_cnt);
-			vDB_TestIdNum.length = vDB_cnt;
-			vDB_TestConductor.length = vDB_cnt;
-			vDB_TestIdStr.length = vDB_cnt;
-			vDB_TestDate.length = vDB_cnt;
-			vDB_Result.length = vDB_cnt;
-			vDB_srNo.length = vDB_cnt;
+			retVar = parseInt(AjaxRequest.responseText);
+			console.log("Count of rcds by conductor:" + retVar);
+			vDB_TestIdNum.length = retVar;
+			vDB_TestConductor.length = retVar;
+			vDB_TestIdStr.length = retVar;
+			vDB_TestDate.length = retVar;
+			vDB_Result.length = retVar;
+			vDB_srNo.length = retVar;
 		}
 	};	
+	return retVar;
 
 }
 function AjaxGetSpecificRcdOfId(strrTestId,uirRcdNum){
@@ -2792,6 +2820,7 @@ function AjaxGetSpecificRcdOfId(strrTestId,uirRcdNum){
 
 }
 function AjaxGetCountOfIncompleteTests(){
+	var retVar;
 	var urlName = "GetIncompleteTestCnt.php";
 	console.log("Calling AjaxGetCountOfIncompleteTests"); 
 	var AjaxRequest;
@@ -2801,14 +2830,14 @@ function AjaxGetCountOfIncompleteTests(){
 	AjaxRequest.onreadystatechange = function (){
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			console.log("Get count of Incomplete Tests");
-			vDB_cnt = parseInt(AjaxRequest.responseText);
-			console.log("Count of rcds by conductor:" + vDB_cnt);
-			vDB_TestIdNum.length = vDB_cnt;
-			vDB_TestConductor.length = vDB_cnt;
-			vDB_TestIdStr.length = vDB_cnt;
-			vDB_TestDate.length = vDB_cnt;
-			vDB_Result.length = vDB_cnt;
-			vDB_srNo.length = vDB_cnt;
+			retVar = parseInt(AjaxRequest.responseText);
+			console.log("Count of rcds by conductor:" + retVar);
+			vDB_TestIdNum.length = retVar;
+			vDB_TestConductor.length = retVar;
+			vDB_TestIdStr.length = retVar;
+			vDB_TestDate.length = retVar;
+			vDB_Result.length = retVar;
+			vDB_srNo.length = retVar;
 		}
 	};	
 }
@@ -2826,6 +2855,7 @@ function AjaxGetSpecificRcdOfIncompleteTests(uirRcdNum){
 			vDB_str = AjaxRequest.responseText;
 			console.log("Specific Rcd of Incomp Test:" + vDB_str);
 			//ToDo: Extract Individual Element
+			ExtractTestParamsFromString(vDB_str,uirRcdNum);
 		}
 	};	
 }
@@ -2845,11 +2875,13 @@ function AjaxGenerateExcelRpt(uirTestId){
 
 function ExtractTestParamsFromString(stringToExtract,uirRcdNum){
 	var lclPosnCntr = 0;
+	var lclString = stringToExtract;
 	//Extract Test Id
 	lclPosnCntr = lclString.search(';');
 	subString = lclString.slice(0, lclPosnCntr);
 	vDB_TestIdNum[uirRcdNum - 1] = parseInt(subString);
 	alert("vDB_TestIdNum[uirRcdNum - 1]:" + vDB_TestIdNum[uirRcdNum - 1]);
+	vDBTableRow[0] = subString;
 	subString = subString + ';';
 	lclString = lclString.replace(subString, '');
 	
@@ -2858,6 +2890,7 @@ function ExtractTestParamsFromString(stringToExtract,uirRcdNum){
 	lclPosnCntr = lclString.search(';');
 	subString = lclString.slice(0, lclPosnCntr);
 	vDB_TestIdStr[uirRcdNum - 1] = subString;
+	vDBTableRow[1] = subString;
 	subString = subString + ';';
 	lclString = lclString.replace(subString, '');
 
@@ -2865,6 +2898,7 @@ function ExtractTestParamsFromString(stringToExtract,uirRcdNum){
 	lclPosnCntr = lclString.search(';');
 	subString = lclString.slice(0, lclPosnCntr);
 	vDB_TestConductor[uirRcdNum - 1] = subString;
+	vDBTableRow[2] = subString;
 	subString = subString + ';';
 	lclString = lclString.replace(subString, '');
 
@@ -2872,15 +2906,13 @@ function ExtractTestParamsFromString(stringToExtract,uirRcdNum){
 	lclPosnCntr = lclString.search(';');
 	subString = lclString.slice(0, lclPosnCntr);
 	vDB_TestDate[uirRcdNum - 1] = subString;
+	vDBTableRow[3] = subString;
 	subString = subString + ';';
 	lclString = lclString.replace(subString, '');
 	
 	//Extract Test Result
-	lclPosnCntr = lclString.search(';');
-	subString = lclString.slice(0, lclPosnCntr);
 	vDB_Result[uirRcdNum - 1] = subString;
-
-	vDB_srNo.length = uirRcdNum;
+	vDBTableRow[4] = subString;
 }
 
 
@@ -4228,21 +4260,47 @@ function ViewGenRptOkAction() {
 		case ViewGenRptGetStartDate:
 			//Get the input from the Input
 			dbQStartDate = document.getElementById('datepicker').value;
-			//alert("This is the start Date" + dbQStartDate);
+			alert("This is the start Date" + dbQStartDate);
 			GenRpt_ShowDateSortEnd();
 			ViewGenRptStatus = ViewGenRptGetEndDate;
 			break;
 		case ViewGenRptGetEndDate:
-			dbQEndDate = document.getElementById('datepicker').value;
-			//alert("This is the end Date" + dbQEndDate);
+			dbQEndDate = document.getElementById('datepicker').value ;
+			alert("This is the end Date" + dbQEndDate);
+			var lclEndDate = new Date(dbQEndDate);
+			alert("This is the end Date" + dbQEndDate);
+			extractDateOnly(dbQStartDate);
+			vDB_Q_stDate = vDB_TempDate;
+			vDB_Q_stMonth = vDB_TempMonth;
+			vDB_Q_stYear = vDB_TempYear;
+
+			extractDateOnly(dbQEndDate);
+			vDB_Q_EndDate = vDB_TempDate;
+			vDB_Q_EndMonth = vDB_TempMonth;
+			vDB_Q_EndYear = vDB_TempYear;
+
 			canvasHide('canvasSortMenu');
 			//Hide Pushbutton
 			hideInput('submitBtn2');
 			//Hide TextBox
 			hideDiv('DateDiv');
 			//show canvasSelectTest 
-
-			unhideDiv('divTbl1');
+			AjaxGetCountOfTestBetnDates(vDB_Q_stDate,vDB_Q_stMonth,vDB_Q_stYear,vDB_Q_EndDate,vDB_Q_EndMonth,vDB_Q_EndYear);
+			console.log("This is the record count:" + vDB_cnt);
+			resizeTableArray(vDB_cnt);
+			vDB_AjaxExecuted = 0;
+			var lclCntr;
+			if(vDB_cnt > 0){
+				clearTable('tblTestList');
+				for(lclCntr = 0 ; lclCntr < vDB_cnt;lclCntr++){
+					AjaxGetSpecificRcdOfTestBetnDates(vDB_Q_stDate,vDB_Q_stMonth,vDB_Q_stYear,vDB_Q_EndDate,vDB_Q_EndMonth,vDB_Q_EndYear,(lclCntr + 1));
+					AddElementToTable('tblTestList',5,vDBTableRow);	
+				}
+				unhideDiv('divTbl1');
+			}
+			else{
+				alert("No Records found");
+			}
 			break;
 		case ViewGenRptGetTestConductor:
 			canvasKbdHide();
@@ -4303,6 +4361,24 @@ function ViewGenRptEventAdd() {
 	//AddEventForTableRows('tblTestList');    
 }
 
+function clearTable(tableId){
+	var tbl = document.getElementById(tableId);
+	var rows = tbl.getElementsByTagName("tr");
+	var lclCntr = rows.length;
+	if(lclCntr > 1){
+		alert("Deletion of rows required!");
+		lclCntr--;//Now we have exact number of rows to be deleted!
+		//var rowToDel;
+		$('.td0').remove();
+		$('.td1').remove();
+		$('.td2').remove();
+		$('.td3').remove();
+		$('.td4').remove();
+	}
+	else{
+		alert("These are no rows to delete");		
+	}
+}
 
 function AddElementToTable(tableId, cellsToInsert, strData) {
 	// Find a <table> element with id="myTable":
@@ -4449,4 +4525,24 @@ function maxWindow() {
 		console.log("No Condition has been met!");
 	}
 	*/
+}
+
+
+function extractDateOnly(strDate){
+	var lclString = strDate;
+	lclPosnCntr = lclString.search('-');
+	subString = lclString.slice(0, lclPosnCntr);
+	vDB_TempDate = parseInt(subString);
+	subString = subString + '-';
+	lclString = lclString.replace(subString,'');	
+
+	lclPosnCntr = lclString.search('-');
+	subString = lclString.slice(0, lclPosnCntr);
+	vDB_TempMonth = parseInt(subString);
+
+	subString = subString + '-';
+	lclString = lclString.replace(subString,'');	
+
+	vDB_TempYear = parseInt(lclString);
+
 }
