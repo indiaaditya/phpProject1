@@ -457,7 +457,8 @@ textarea {
 
 .tblScroll{
     overflow-y:auto;
-    width: 1200px;
+    overflow-x: hidden;
+    width: 1000px;
     height: 350px;
     position:relative;
     top:-1420px;
