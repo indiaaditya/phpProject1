@@ -181,7 +181,7 @@ and open the template in the editor.
 
 
 		<div id='divCvsResultList' class="classCanvasResultList">
-			<canvas id="canvasSelectTest" width="1450" height="500">
+			
 			</canvas>
 		</div>
 
@@ -192,7 +192,7 @@ and open the template in the editor.
 			</canvas>
 		</div>
 
-		<div id='divCvsKbd' style="position:relative; top:-1070px; left:900px; z-index:2">
+		<div id='divCvsKbd' style="position:relative; top:-570px; left:900px; z-index:2">
 			<canvas id="canvasKbd" width="530" height="320">
 
 			</canvas>
@@ -221,10 +221,11 @@ and open the template in the editor.
 			</table>
 		</div>
 		<div id = 'divCvsSelected' class = "divCvsSelectedRpt" >
+				<canvas id="canvasSelectTest" width="1450" height="500">
 		</div>
 
 		<div id = 'divBtnGenRpt' class = "divClassBtnGenRpt" > 
-		<button id = "btnGenRpt" class = "btnClass" onmouseover="ChangeColorOnFocus('btnGenRpt');" onmouseout="ChangeColorOnDefocus('btnGenRpt');">
+		<button id = "btnGenRpt" class = "btnClass" onmouseover="ChangeColorOnFocus('btnGenRpt');" onmouseout="ChangeColorOnDefocus('btnGenRpt');" onmouseup="AjaxGenerateExcelRpt(vDB_TestIdNum[vRowClicked]);">
 		Generate Report
 		</button>
 		</div>

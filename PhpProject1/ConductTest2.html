@@ -38,50 +38,11 @@ and open the template in the editor.
 
 </head>
 
-<body id="testConductBody" onload="OutletPrGauge = CanvasDrawGauge('OlPrGauge',0,400,8,2,true,'','');		    
-		     InletPrGauge = CanvasDrawGauge('InletPrGauge',0,400,4,2,true,'Inlet Pressure','');
-			 TqGauge = CanvasDrawGauge('TqGauge',-35,0,7,2,true,'Peak Torque','N-m');
-			 GetTestId_now();
-		     AjaxRetrieveTestParameters();	
-		       $.each(GrInletconfig.data.datasets, function(i, dataset) {
-			    var background = '#C7FF32';
-			    dataset.borderColor = background;
-			    dataset.backgroundColor = background;
-			    dataset.pointBorderColor = background;
-			    dataset.pointBackgroundColor = background;
-			    dataset.pointBorderWidth = 1;
-			});
-		      $.each(GrOutletconfig.data.datasets, function(i, dataset) {
-			    var background = '#C7FF32';
-			    dataset.borderColor = background;
-			    dataset.backgroundColor = background;
-			    dataset.pointBorderColor = background;
-			    dataset.pointBackgroundColor = background;
-			    dataset.pointBorderWidth = 1;
-			});
-	
-			$.each(GrTqconfig.data.datasets, function(i, dataset) {
-			    var background = '#C7FF32';
-			    dataset.borderColor = background;
-			    dataset.backgroundColor = background;
-			    dataset.pointBorderColor = background;
-			    dataset.pointBackgroundColor = background;
-			    dataset.pointBorderWidth = 1;
-			});	
-			ETConduct_ShowHideCanvas('canvasGrInlet');
-			ETConduct_ShowHideCanvas('canvasGrOutlet');
-			ETConduct_ShowHideCanvas('canvasGrTq');
-
-			alert('Test id:' + vTestId);
-			AjaxUpdateTestStatus(vTestId,ET_TEST_ID_ACCEPTED);
-			hideDiv('divResumeWindow');
-			hideDiv('divAbortWindow');
-			ETConduct_ShowHideCanvas('canvasGrInlet');
-			ETConduct_ShowHideCanvas('canvasGrOutlet');
-			ETConduct_ShowHideCanvas('canvasGrTq');
-
+<body id="testConductBody" onload="
+                console.log('AAA');
+                RetrieveTestParamOfTestToResume();
+                
 		    ">
-
 	<div id="maincontent">
 
 		<div id="logobar">

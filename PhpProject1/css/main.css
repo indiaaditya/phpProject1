@@ -244,7 +244,7 @@ textarea {
 }
 
 .classCanvasResultList{
-    position:relative;
+    position:fixed;
     top:-560px;
     left:50px;
     z-index:1;
@@ -455,19 +455,23 @@ textarea {
     font-size: 100%;
 }
 
-.tblScroll{
+.tblScroll,.tblScroll2 {
     overflow-y:auto;
     overflow-x: hidden;
     width: 1000px;
     height: 350px;
     position:relative;
-    top:-1420px;
-    left: 200px;
+    top:-920px;
+    left: 100px;
     z-index:2;
 }
 
-.divCvsSelectedRpt{
-    border-style: dashed;
+.tblScroll2{
+    top:20px;
+}
+
+.divCvsSelectedRpt,.divCvsIncompSelTest{
+    /*border-style: dashed;*/
     position:fixed;
     bottom: 0;
     right: 0;
@@ -476,14 +480,21 @@ textarea {
     z-index:1;
 }
 
-.divClassBtnGenRpt{
+.divCvsIncompSelTest{
+    width: 200px;
+}
+
+.divClassBtnGenRpt,.divClassBtnResumeTest{
     position: fixed;
     bottom: -40px;
     right: 150px;
     width: 280px;
     height: 100px;
     z-index:2;
-    
+}
+
+.divClassBtnResumeTest{
+    bottom: -50px;
 }
 
 .btnClass, .btnResume{
@@ -518,6 +529,7 @@ textarea {
     position: relative;
     left: -70px;
     top:-68px;
+
 }
 
 .logoimageRightBracket

@@ -9,6 +9,8 @@
 //ViewGenRpt Vars
 var vArrOriginalCursors = new Array(2);
 var viewGenCurrRow = 0;
+var vSelectedRow = 0;
+var vRowClicked = 0;
 
 
 
@@ -28,13 +30,13 @@ var KBD_KEY_ACTIVE = 1;
 var KBD_KEY_VALID = 1;
 
 //Constant declarations
-var ETPARAMENTRY_TESTPRESSURE_NEW = 1;
-var ETPARAMENTRY_OPEN_ROTATION_NEW = 2;
-var ETPARAMENTRY_CLOSING_TORQUE_NEW = 3;
-var ETPARAMENTRY_END_TORQUE_NEW = 8;
-var ETPARAMENTRY_TEST_CYCLES_NEW = 4;
-var ETPARAMENTRY_TEST_ID_NEW = 5;
-var ETPARAMENTRY_TEST_CONDUCTOR_NEW = 6;
+const ETPARAMENTRY_TESTPRESSURE_NEW = 1;
+const ETPARAMENTRY_OPEN_ROTATION_NEW = 2;
+const ETPARAMENTRY_CLOSING_TORQUE_NEW = 3;
+const ETPARAMENTRY_END_TORQUE_NEW = 8;
+const ETPARAMENTRY_TEST_CYCLES_NEW = 4;
+const ETPARAMENTRY_TEST_ID_NEW = 5;
+const ETPARAMENTRY_TEST_CONDUCTOR_NEW = 6;
 //var ETPARAMENTRY_PARAM_ENTRY_COMPLETE = 7;
 var ETPARAMENTRY_AWAIT_USER_ACCEPTANCE = 7;
 
@@ -175,6 +177,7 @@ var ETSet_TestDateAndTime;
 var ETSet_TestId = "";
 var ETSet_TestConductor = "";
 var ETSet_UsedClosingTorque;
+var ET_ResumeTestCompletedCycles = 0;
 
 //Global Variables for hiding and showing the Canvas elements
 var boolCanvasIncrementDecrementSliderShow = 1;    //1: Show the canvas, 0: hide the canvas
@@ -401,8 +404,12 @@ var vDB_str = "";
 var vDB_GetRcdDatesId;
 var vDB_GetRcdByConductor;
 var vDB_GetRcdByTestId;
+var vDB_GetRcdIncompTest;
+var VDB_GetIncompTstParam;
+var VDB_StoreRcdProcess;
 
 var vDB_strQuery = "";
+
 
 
 var vDB_TestIdNum = new Array(100);
@@ -424,6 +431,8 @@ var vDB_AjaxExecuted = 0;
 var vDBTableRow = new Array(6);
 var vDB_responseReady = 0;
 
+
+
 const GET_BETN_DATES_TRIGGER_AJAX = 1;
 const GET_BETN_DATES_AWAIT_COMPLETION = 2;
 const GET_BETN_DATES_TAKE_ACTION = 3;
@@ -439,12 +448,55 @@ const GET_BY_TEST_ID_AWAIT_COMPLETION = 2;
 const GET_BY_TEST_ID_TAKE_ACTION = 3;
 const GET_BY_TEST_ID_EXIT_ACTION = 4;
 
+const GET_BY_INCOMP_TEST_TRIGGER_AJAX = 1;
+const GET_BY_INCOMP_TEST_AWAIT_COMPLETION = 2;
+const GET_BY_INCOMP_TEST_TAKE_ACTION = 3;
+const GET_BY_INCOMP_TEST_EXIT_ACTION = 4;
+
+const INCOMP_TST_GET_TEST_PARAM_FROM_DB = 1;
+const INCOMP_TST_AWAIT_RESPONSE = 2;
+const INCOMP_TST_STORE_PARAM_IN_FILE_BEGIN = 3;
+const INCOMP_TST_STORE_PARAM_IN_FILE_AWAIT = 4;
+const INCOMP_TST_LOAD_PAGE = 5;
+
+const RESTART_TEST_GET_PARAM = 1;
+const RESTART_TEST_FILL_PARAM = 2;
+const RESTART_TEST_EXIT_ACTION = 3;
+
+const STORE_TEST_PARAM_BEGIN = 1;
+const STORE_TEST_PARAM_AWAIT = 2;
+const STORE_TEST_PARAM_EXIT_ACTION = 3;
+
+const RESUME_LATER_BEGIN 					= 1;
+const RESUME_LATER_EMERGENCY_STOP_MONITOR	= 2;
+const RESUME_LATER_UPDATE_STATUS			= 3;
+const RESUME_LATER_AWIT_STATUS_UPDATE_COMP  = 4;
+const RESUME_LATER_EXIT_ACTION 				= 5;
+
+const ABORT_TEST_BEGIN	 					= 1;
+const ABORT_TEST_EMERGENCY_STOP_MONITOR		= 2;
+const ABORT_TEST_UPDATE_STATUS				= 3;
+const ABORT_TEST_AWIT_STATUS_UPDATE_COMP 	= 4;
+const ABORT_TEST_EXIT_ACTION 				= 5;
+
 
 
 
 var vDB_GetRecordBetweenDatesStatus = GET_BETN_DATES_TRIGGER_AJAX;
 var VDB_GetRecordByConductorStatus = GET_BY_CONDUCTOR_TRIGGER_AJAX;
 var VDB_GetRecordByTestId = GET_BY_TEST_ID_TRIGGER_AJAX;
+var vDB_GetIncompleteRcd = GET_BY_TEST_ID_TRIGGER_AJAX;
+var vDBResumeTestStat = INCOMP_TST_GET_TEST_PARAM_FROM_DB;
+var vDBRestartTestStat = RESTART_TEST_GET_PARAM;
+var vDBStoreTestParamStat = STORE_TEST_PARAM_BEGIN;
+
+var vResumeTestStat = RESUME_LATER_BEGIN;
+var vAbortTestStat =  ABORT_TEST_BEGIN;
+
+
+var vFunctionReentryCntr = 0;
+
+
 
 
 
@@ -1507,23 +1559,23 @@ function CursorModify(ElementID, CursorType) {
 	document.getElementById(ElementID).style.cursor = CursorType;
 }
 
-function CursorModifyEntirePage(CursorType){
+function CursorModifyEntirePage(CursorType) {
 	var elements = document.body.getElementsByTagName('*');
 	//alert("These are the elements found:" + elements.length);
 	let lclCntr = 0;
-	vArrOriginalCursors.length = elements.length; 
-	for(lclCntr = 0; lclCntr < elements.length; lclCntr++){
+	vArrOriginalCursors.length = elements.length;
+	for (lclCntr = 0; lclCntr < elements.length; lclCntr++) {
 		vArrOriginalCursors[lclCntr] = elements[lclCntr].style.cursor;
 		elements[lclCntr].style.cursor = CursorType;
 	}
 }
 
-function CursorRestoreEntirePage(){
+function CursorRestoreEntirePage() {
 	let lclCntr = 0;
 	var elements = document.body.getElementsByTagName('*');
 	//alert("This is the element length:" + elements.length);
 	//alert("This is the array length:" + vArrOriginalCursors.length);
-	for(lclCntr = 0; lclCntr < elements.length; lclCntr++){
+	for (lclCntr = 0; lclCntr < elements.length; lclCntr++) {
 		elements[lclCntr].style.cursor = vArrOriginalCursors[lclCntr];
 	}
 }
@@ -1607,6 +1659,7 @@ function ETParamEntryUpArrowAction() {
 			break;
 		default:
 			alert("Invalid Case in function: ETParamEntryUpArrowAction");
+			break;
 	}
 }
 
@@ -1635,6 +1688,7 @@ function ETParamEntryDownArrowAction() {
 			break;
 		default:
 			alert("Invalid Case in function: ETParamEntryDownArrowAction");
+			break;
 	}
 }
 
@@ -2136,10 +2190,8 @@ function ETParam_SubmitAction(ItemId) {
 		case ETPARAMENTRY_AWAIT_USER_ACCEPTANCE:
 			//alert("Came Here!!!");
 			//AjaxStoreTestParameters(uirTestPressure, uirOpenRotation, frClosingTq, frEndTq, uirTestCycles, strrTestId, uirStrTestIdLen, strrTestCond, uirStrTestCondLen)
-			AjaxStoreTestParameters(ETSet_Pressure, ETSet_OpeningRotation, ETSet_ClosingTorque, ETSet_EndTorque, ETSet_Cycles, ETSet_TestId, ETSet_TestId.length, ETSet_TestConductor, ETSet_TestConductor.length);
-			alert("Stored Params!");
-			LoadPage('testConduct.html');
-		//break;
+			ReentrantStoreTestParameters();
+			break;
 	}
 
 
@@ -2450,8 +2502,10 @@ function createAjaxRequest(strVarToDouble, secondVar) {
 		//alert("Ätleast state Changed, Ready State = " + AjaxRequest.readyState + "Status" + AjaxRequest.status);
 		//if(AjaxRequest.status === 404)
 		//alert("This is the status:" + AjaxRequest.status);             
-		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200)
-			alert("The Doubled result is: " + AjaxRequest.responseText);
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			//alert("The Doubled result is: " + AjaxRequest.responseText);
+		}
+
 	};
 	AjaxRequest.open("Get", urlName, true);
 	AjaxRequest.send();
@@ -2466,13 +2520,10 @@ function AjaxStoreTestParameters(uirTestPressure, uirOpenRotation, frClosingTq, 
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
 	AjaxRequest.onreadystatechange = function () {
-		//if(AjaxRequest.readyState === 2)
-		//console.log("Readystate:" + AjaxRequest.readyState + "Status:" + AjaxRequest.status);
-		//alert("Ätleast state Changed, Ready State = " + AjaxRequest.readyState + "Status" + AjaxRequest.status);
-		//if(AjaxRequest.status === 404)
-		//alert("This is the status:" + AjaxRequest.status);             
-		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200)
-			alert("Store Test Param Result is: " + AjaxRequest.responseText);
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200){
+			//alert("Store Test Param Result is: " + AjaxRequest.responseText);
+			vDB_responseReady = 1;
+		}
 	};
 	AjaxRequest.open("Get", urlName, true);
 	AjaxRequest.send();
@@ -2534,7 +2585,75 @@ function AjaxRetrieveTestParameters() {
 	};
 
 	//GetPhpValue('TestPr',ETSet_Pressure);
-	alert("Value of ETSet_Pressure is" + ETSet_Pressure);
+	//alert("Value of ETSet_Pressure is" + ETSet_Pressure);
+}
+
+function AjaxRetrieveTestParamFromDB(uirTestId) {
+	var urlName = "RetrieveTestParamFromDB.php?i=" + uirTestId;
+	var AjaxRequest;
+	var lclString, subString;
+	var lclPosnCntr;
+	vDB_responseReady = 0;
+	AjaxRequest = new XMLHttpRequest();
+
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function () {
+		lclString = AjaxRequest.responseText;
+
+		lclPosnCntr = lclString.search(';');
+		subString = lclString.slice(0, lclPosnCntr);
+		//alert("Split String:" + subString);
+		subString = subString + ';';
+		lclString = lclString.replace(subString, '');
+
+		lclPosnCntr = lclString.search(';');
+		subString = lclString.slice(0, lclPosnCntr);
+		//alert("Split String:" + subString);
+		subString = subString + ';';
+		lclString = lclString.replace(subString, '');
+
+		lclPosnCntr = lclString.search(';');
+		subString = lclString.slice(0, lclPosnCntr);
+		//alert("Split String:" + subString);
+		ETSet_Pressure = parseInt(subString);
+		subString = subString + ';';
+		lclString = lclString.replace(subString, '');
+
+		lclPosnCntr = lclString.search(';');
+		subString = lclString.slice(0, lclPosnCntr);
+		//alert("Split String:" + subString);
+		ETSet_OpeningRotation = parseInt(subString);
+		subString = subString + ';';
+		lclString = lclString.replace(subString, '');
+
+		lclPosnCntr = lclString.search(';');
+		subString = lclString.slice(0, lclPosnCntr);
+		//alert("Split String:" + subString);
+		ETSet_ClosingTorque = parseFloat(subString);
+		subString = subString + ';';
+		lclString = lclString.replace(subString, '');
+
+		lclPosnCntr = lclString.search(';');
+		subString = lclString.slice(0, lclPosnCntr);
+		//alert("Split String:" + subString);
+		ETSet_EndTorque = parseFloat(subString);
+		subString = subString + ';';
+		lclString = lclString.replace(subString, '');
+
+		lclPosnCntr = lclString.search(';');
+		subString = lclString.slice(0, lclPosnCntr);
+		//alert("Split String:" + subString);
+		ETSet_Cycles = parseInt(subString);
+		subString = subString + ';';
+		lclString = lclString.replace(subString, '');
+
+		//alert("Remaining String:" + lclString);
+		ET_ResumeTestCompletedCycles = parseInt(lclString);
+		//alert("Remaining String:" + lclString);
+		vDB_responseReady = 1;
+	}
+
 }
 
 function AjaxServoSetStatus(uirSrvo_DesDegOfRtn, uirDirnOfRtn, frSrvo_DesTq) {
@@ -2760,8 +2879,11 @@ function AjaxGetCountOfTestBetnDates(uiStartDate, uiStartMonth, uiStartYear, uiE
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			vDB_cnt = parseInt(AjaxRequest.responseText);
 			alert("Get Count of Test Betn. Dates Complete:" + vDB_cnt);
-			clearTable('tblTestList');
-			vDB_GetRcdDatesId = setInterval(GetRcdBetnDates, 5);
+			if (vDB_cnt > 0) {
+				CursorModifyEntirePage('wait');
+				clearTable('tblTestList');
+				vDB_GetRcdDatesId = setInterval(GetRcdBetnDates, 5);
+			}
 			vDB_responseReady = 1;
 		}
 		else {
@@ -2812,8 +2934,11 @@ function AjaxGetCountOfTestByConductors(strCondName) {
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			vDB_cnt = parseInt(AjaxRequest.responseText);
 			alert("Records by Conductor:" + vDB_cnt);
-			clearTable('tblTestList');
-			vDB_GetRcdByConductor = setInterval(GetRcdByConductors, 10);
+			if (vDB_cnt > 0) {
+				clearTable('tblTestList');
+				CursorModifyEntirePage('wait');
+				vDB_GetRcdByConductor = setInterval(GetRcdByConductors, 10);
+			}
 			vDB_responseReady = 1;
 		}
 	};
@@ -2842,8 +2967,6 @@ function AjaxGetSpecificRcdOfTestByConductors(strCondName, uirRcdNum) {
 
 }
 
-
-
 function AjaxGetCountOfTestById(strrTestId) {
 	vDB_responseReady = 0;
 	vDB_RcdToGet = 1;
@@ -2857,15 +2980,15 @@ function AjaxGetCountOfTestById(strrTestId) {
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			vDB_cnt = parseInt(AjaxRequest.responseText);
 			alert("Count of rcds by conductor:" + vDB_cnt);
-			clearTable('tblTestList');
-			CursorModifyEntirePage('wait');	
-			vDB_GetRcdByTestId = setInterval(GetRcdByTestName, 10);
+			if (vDB_cnt > 0) {
+				clearTable('tblTestList');
+				CursorModifyEntirePage('wait');
+				vDB_GetRcdByTestId = setInterval(GetRcdByTestName, 10);
+			}
 			vDB_responseReady = 1;
 		}
 	};
 }
-
-
 function AjaxGetSpecificRcdOfId(strrTestId, uirRcdNum) {
 	vDB_responseReady = 0;
 	var urlName = "GetTestRcdByTestName.php?c=" + strrTestId + "&r=" + uirRcdNum;
@@ -2886,7 +3009,6 @@ function AjaxGetSpecificRcdOfId(strrTestId, uirRcdNum) {
 function AjaxGetCountOfIncompleteTests() {
 	vDB_responseReady = 0;
 	vDB_RcdToGet = 1;
-	var retVar;
 	var urlName = "GetIncompleteTestCnt.php";
 	console.log("Calling AjaxGetCountOfIncompleteTests");
 	var AjaxRequest;
@@ -2895,20 +3017,18 @@ function AjaxGetCountOfIncompleteTests() {
 	AjaxRequest.send();
 	AjaxRequest.onreadystatechange = function () {
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
-			console.log("Get count of Incomplete Tests");
-			retVar = parseInt(AjaxRequest.responseText);
-			console.log("Count of rcds by conductor:" + retVar);
-			vDB_TestIdNum.length = retVar;
-			vDB_TestConductor.length = retVar;
-			vDB_TestIdStr.length = retVar;
-			vDB_TestDate.length = retVar;
-			vDB_Result.length = retVar;
-			vDB_srNo.length = retVar;
+			vDB_cnt = parseInt(AjaxRequest.responseText);
+			console.log("Count of Incomplete Tests:" + vDB_cnt);
+			if (vDB_cnt > 0) {
+				console.log("This is the record to get" + vDB_RcdToGet);
+				clearTable('tblTestList');
+				CursorModifyEntirePage('wait');
+				vDB_GetRcdIncompTest = setInterval(GetRcdIncompleteTest, 10);
+			}
 			vDB_responseReady = 1;
 		}
 	};
 }
-
 function AjaxGetSpecificRcdOfIncompleteTests(uirRcdNum) {
 	vDB_responseReady = 0;
 	var urlName = "GetIncompleteTestRcd.php?r=" + uirRcdNum;
@@ -2929,6 +3049,7 @@ function AjaxGetSpecificRcdOfIncompleteTests(uirRcdNum) {
 	};
 }
 function AjaxGenerateExcelRpt(uirTestId) {
+	console.log("This is the test ID:" + uirTestId);
 	vDB_responseReady = 0;
 	var urlName = "GenExcel.php?i=" + uirTestId;
 	console.log("Calling AjaxGenerateExcelRpt");
@@ -2942,6 +3063,99 @@ function AjaxGenerateExcelRpt(uirTestId) {
 			vDB_responseReady = 1;
 		}
 	};
+}
+
+function AjaxStoreTestToResumeData(uirTestPressure,uirOpenRotation,frClosingTq,frEndTq,uirTestCycles,ulTestId,ulCompletedCycles){
+	vDB_responseReady = 0;
+	var urlName = "storeResumeTestParams.php?q=" + uirTestPressure + "&r=" + uirOpenRotation + "&s=" + frClosingTq + "&t=" + frEndTq + "&u=" +  uirTestCycles + "&v=" + ulTestId + "&w=" + ulCompletedCycles;
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function () {
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("AjaxStoreTestToResumeData Complete");
+			vDB_responseReady = 1;
+		}
+	};
+}
+function AjaxRetrieveTestToResumeData(){
+	vDB_responseReady = 0;
+	var urlName = "RetrieveResumeTestParams.php";
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function () {
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("AjaxRetrieveTestToResumeData Complete");
+				lclString = AjaxRequest.responseText;
+				
+				lclPosnCntr = lclString.search(';');
+				subString = lclString.slice(0, lclPosnCntr);
+				console.log("Split String:" + subString);
+				ETSet_Pressure = parseInt(subString);
+				subString = subString + ';';
+				lclString = lclString.replace(subString, '');
+		
+				lclPosnCntr = lclString.search(';');
+				subString = lclString.slice(0, lclPosnCntr);
+				console.log("Split String:" + subString);
+				ETSet_OpeningRotation = parseInt(subString);
+				subString = subString + ';';
+				lclString = lclString.replace(subString, '');
+		
+				lclPosnCntr = lclString.search(';');
+				subString = lclString.slice(0, lclPosnCntr);
+				console.log("Split String:" + subString);
+				ETSet_ClosingTorque = parseFloat(subString);
+				subString = subString + ';';
+				lclString = lclString.replace(subString, '');
+		
+				lclPosnCntr = lclString.search(';');
+				subString = lclString.slice(0, lclPosnCntr);
+				console.log("Split String:" + subString);
+				ETSet_EndTorque = parseFloat(subString);
+				subString = subString + ';';
+				lclString = lclString.replace(subString, '');
+		
+				lclPosnCntr = lclString.search(';');
+				subString = lclString.slice(0, lclPosnCntr);
+				console.log("Split String:" + subString);
+				ETSet_Cycles = parseInt(subString);
+				subString = subString + ';';
+				lclString = lclString.replace(subString, '');
+
+				lclPosnCntr = lclString.search(';');
+				subString = lclString.slice(0, lclPosnCntr);
+				console.log("Split String:" + subString);
+				ET_ResumeTestCompletedCycles = parseInt(subString);
+				console.log("ET_ResumeTestCompletedCycles:" + vTestId);
+				subString = subString + ';';
+				lclString = lclString.replace(subString, '');
+		
+				console.log("Remaining String:" + lclString);
+				vTestId = parseInt(lclString);
+				console.log("Test ID:" + vTestId);
+				RetrieveTestParamOfTestToResume = ET_ResumeTestCompletedCycles;
+				
+				vDB_responseReady = 1;
+		}
+	};
+}
+
+function AjaxKillApp(){
+	var urlName = "killApp.php";
+	var AjaxRequest;
+	AjaxRequest = new XMLHttpRequest();
+	AjaxRequest.open("Get", urlName, true);
+	AjaxRequest.send();
+	AjaxRequest.onreadystatechange = function () {
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("Termination Complete!");
+		}
+	}
+
 }
 
 function ExtractTestParamsFromString(stringToExtract, uirRcdNum) {
@@ -2959,7 +3173,7 @@ function ExtractTestParamsFromString(stringToExtract, uirRcdNum) {
 	//Extract Test Conductor
 	lclPosnCntr = lclString.search(';');
 	subString = lclString.slice(0, lclPosnCntr);
-	vDB_TestConductor[uirRcdNum - 1] = subString;
+	vDB_TestIdStr[uirRcdNum - 1] = subString;
 	vDBTableRow[1] = subString;
 	subString = subString + ';';
 	lclString = lclString.replace(subString, '');
@@ -2967,7 +3181,7 @@ function ExtractTestParamsFromString(stringToExtract, uirRcdNum) {
 	//Extract Test Name
 	lclPosnCntr = lclString.search(';');
 	subString = lclString.slice(0, lclPosnCntr);
-	vDB_TestIdStr[uirRcdNum - 1] = subString;
+	vDB_TestConductor[uirRcdNum - 1] = subString;
 	vDBTableRow[2] = subString;
 	subString = subString + ';';
 	lclString = lclString.replace(subString, '');
@@ -2986,9 +3200,6 @@ function ExtractTestParamsFromString(stringToExtract, uirRcdNum) {
 	vDBTableRow[4] = lclString;
 	//alert("vDB_Result" + (uirRcdNum - 1) + ":" + vDBTableRow[4]);
 }
-
-
-
 function PrTransConvertCurrentToPressure(uirCurrentModbusReading) {
 	var vlclPrReading;
 	var vNegFlag = 0;
@@ -3256,7 +3467,7 @@ function ExecuteEnduranceTest() {
 				}
 				else {//Declare an Error
 					//EnduranceTestExecuteCurrrentStat = ;
-					alert("AAA");
+					//alert("AAA");
 					ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
 					ET_ServoMechErrorCntr++;
 					ET_ShowHideError();
@@ -3304,7 +3515,7 @@ function ExecuteEnduranceTest() {
 				}
 				if (vServoDelayCntr > 100) {
 					//alert("Timeout Detected!");
-					alert("BBB");
+					//alert("BBB");
 					ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
 					ET_ServoMechErrorCntr++;
 					ET_ShowHideError();
@@ -3349,7 +3560,7 @@ function ExecuteEnduranceTest() {
 				}
 				else {
 					if ((srvoStatus === SERVO_CMD_STAT_ERR) || (vServoDelayCntr > 100)) {
-						alert("CCC");
+						//alert("CCC");
 						ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
 						ET_ServoMechErrorCntr++;
 						ET_ShowHideError();
@@ -3573,9 +3784,9 @@ function ExecuteEnduranceTest() {
 					if (tqAquireDelayCntr > 4) {
 						EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;
 						//alert("DDD");
-						//ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
-						//ET_ServoMechErrorCntr++;
-						//ET_ShowHideError();
+						ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
+						ET_ServoMechErrorCntr++;
+						ET_ShowHideError();
 					}
 				}
 			}
@@ -3805,8 +4016,8 @@ function ExecuteEnduranceTest() {
 				alert("This is the servo status" + srvoStatus);
 				//EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION;
 				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-				alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
+				//alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
+				//alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
 				break;
 			}
 
@@ -4422,7 +4633,7 @@ function clearTable(tableId) {
 	var rows = tbl.getElementsByTagName("tr");
 	var lclCntr = rows.length;
 	if (lclCntr > 1) {
-		alert("Deletion of rows required!");
+		//alert("Deletion of rows required!");
 		lclCntr--;//Now we have exact number of rows to be deleted!
 		//var rowToDel;
 		$('.td0').remove();
@@ -4432,7 +4643,7 @@ function clearTable(tableId) {
 		$('.td4').remove();
 	}
 	else {
-		alert("These are no rows to delete");
+		//alert("These are no rows to delete");
 	}
 }
 
@@ -4485,16 +4696,15 @@ function GlowRowOnTable(tableId, rowNumber) {
 	var tbl = document.getElementById(tableId);
 	var rows = tbl.getElementsByTagName("tr");
 	if (rows.length > 0) {
-		var lclRow = tbl.rows[rowNumber + 1];
-		var lclClassName = lclRow.className;
+		vSelectedRow = tbl.rows[rowNumber + 1];
+		var lclClassName = vSelectedRow.className;
 		//console.log("Class name of the row: " + lclRow.className + "\n");
 		if (lclClassName !== "") {
 			//console.log("Class Name Change begin...");
-			if (lclRow.className === "classTableElement")
-
-				lclRow.className = "classTableElementHilight";
+			if (vSelectedRow.className === "classTableElement")
+				vSelectedRow.className = "classTableElementHilight";
 			else
-				lclRow.className = "classTableElement";
+				vSelectedRow.className = "classTableElement";
 		}
 		else {
 			//console.log("class Name");
@@ -4539,18 +4749,35 @@ function AddEventsToTableForEachRow(tableId) {
 			GlowRowOnTable('tblTestList', closureVar)
 		}, false);
 		rowElement[closureVar].addEventListener("click", function () {
-			TableRowClickAction();
+			TableRowClickAction(closureVar);
 		}, false);
 		console.log("Adding Events:" + lclCntr);
 	}
 	console.log("Job Done.");
 }
 
-function TableRowClickAction() {
+function TableRowClickAction(rRowNumber) {
+	/*
+	console.log("Selected Row:" + rRowNumber);
+	console.log("Test ID:" + vDB_TestIdStr[rRowNumber]);
+	console.log("Test Conductor:" + vDB_TestConductor[rRowNumber]);
+	console.log("Test Date:"+ vDB_TestDate[rRowNumber] );
+	console.log("Test Result:"+ vDB_Result[rRowNumber] );
+	*/
+	vRowClicked = rRowNumber;
+
+	EraseCanvasText('canvasSelectTest', 1);
+	EraseCanvasText('canvasSelectTest', 2);
+	EraseCanvasText('canvasSelectTest', 3);
+	EraseCanvasText('canvasSelectTest', 4);
+	SetCanvasText('canvasSelectTest', "Id:" + vDB_TestIdStr[rRowNumber], 1, '145% Trebuchet MS');
+	SetCanvasText('canvasSelectTest', "Cond.:" + vDB_TestConductor[rRowNumber], 2, '145% Trebuchet MS');
+	SetCanvasText('canvasSelectTest', "Date:" + vDB_TestDate[rRowNumber], 3, '145% Trebuchet MS');
+	SetCanvasText('canvasSelectTest', "Res:" + vDB_Result[rRowNumber], 4, '145% Trebuchet MS');
+
+	//console.log("ADITYA");
 	unhideDiv('divCvsSelected');
 	unhideDiv('divBtnGenRpt');
-	//console.log("ADITYA");
-
 }
 
 function GetTestId_now() {
@@ -4561,26 +4788,8 @@ function GetTestId_now() {
 
 function maxWindow() {
 	browser.webkitFullscreenEnabled();
-
 	console.log(document.webkitIsFullScreen);
 	console.log(document.webkitFullscreenEnabled);
-
-	/*
-	var elem = document;
-	if (elem.requestFullscreen) {
-		console.log("elem.requestFullscreen");
-		elem.requestFullscreen();
-	} else if (elem.mozRequestFullScreen) {
-		console.log("elem.mozRequestFullScreen");
-		elem.mozRequestFullScreen();
-	} else if (elem.webkitRequestFullscreen) {
-		console.log("elem.webkitRequestFullscreen");
-		elem.webkitRequestFullscreen();
-	}
-	else{
-		console.log("No Condition has been met!");
-	}
-	*/
 }
 
 
@@ -4716,7 +4925,7 @@ function GetRcdByTestName() {
 			break;
 		case GET_BY_TEST_ID_EXIT_ACTION:
 			CursorRestoreEntirePage();
-			clearInterval(vDB_GetRcdByTestId);	
+			clearInterval(vDB_GetRcdByTestId);
 			unhideDiv('divTbl1');
 			AddEventsToTableForEachRow('tblTestList');
 			VDB_GetRecordByTestId = GET_BY_TEST_ID_TRIGGER_AJAX;
@@ -4726,4 +4935,269 @@ function GetRcdByTestName() {
 			break;
 	}
 
+}
+
+function GetRcdIncompleteTest() {
+	switch (vDB_GetIncompleteRcd) {
+		case GET_BY_INCOMP_TEST_TRIGGER_AJAX:
+			console.log("AA");
+			AjaxGetSpecificRcdOfIncompleteTests(vDB_RcdToGet);
+			vDB_responseReady = 0;
+			vDB_GetIncompleteRcd = GET_BY_INCOMP_TEST_AWAIT_COMPLETION;
+			break;
+
+		case GET_BY_INCOMP_TEST_AWAIT_COMPLETION:
+			if (vDB_responseReady === 1) {
+				console.log("BB");
+				ExtractTestParamsFromString(vDB_str, vDB_RcdToGet);
+				vDB_responseReady = 0;
+				vDB_GetIncompleteRcd = GET_BY_INCOMP_TEST_TAKE_ACTION;
+			}
+			break;
+
+		case GET_BY_INCOMP_TEST_TAKE_ACTION:
+			CursorRestoreEntirePage();
+			AddElementToTable('tblTestList', 5, vDBTableRow);
+			CursorModifyEntirePage('wait');
+			vDB_RcdToGet++;
+			console.log("CC Rcd to Get" + vDB_RcdToGet + "DB to count" + vDB_cnt);
+			if (vDB_RcdToGet > vDB_cnt) {
+				console.log("CD");
+				vDB_GetIncompleteRcd = GET_BY_INCOMP_TEST_EXIT_ACTION;
+			}
+			else {
+				console.log("CE");
+				vDB_GetIncompleteRcd = GET_BY_INCOMP_TEST_TRIGGER_AJAX;
+			}
+			break;
+
+		case GET_BY_INCOMP_TEST_EXIT_ACTION:
+			console.log("DD");
+			CursorRestoreEntirePage();
+			console.log("DE");
+			clearInterval(vDB_GetRcdIncompTest);
+			console.log("DF");
+			unhideDiv('divTbl1');
+			console.log("DG");
+			AddEventsToTableForEachRow('tblTestList');
+			console.log("DH");
+			VDB_GetRecordByTestId = GET_BY_INCOMP_TEST_TRIGGER_AJAX;
+			console.log("DI");
+			break;
+
+		default:
+			vDB_GetIncompleteRcd = GET_BY_INCOMP_TEST_TRIGGER_AJAX;
+			break;
+	}
+}
+
+function ResumeSelectedTest() {
+	//alert("This is the selected Row:" + vRowClicked);
+	//alert("This is the selected Test ID:" + vDB_TestIdNum[vRowClicked]);
+	//alert("This is the resume Status:" + vDBResumeTestStat);
+	switch (vDBResumeTestStat) {
+		case INCOMP_TST_GET_TEST_PARAM_FROM_DB:
+			if (vFunctionReentryCntr === 0) {
+				//alert("a");
+				vFunctionReentryCntr++;
+				vDB_responseReady = 0;
+				AjaxRetrieveTestParamFromDB(vDB_TestIdNum[vRowClicked]);
+				VDB_GetIncompTstParam = setInterval(ResumeSelectedTest, 100);
+				vDBResumeTestStat = INCOMP_TST_AWAIT_RESPONSE;
+			}
+			break;
+		case INCOMP_TST_AWAIT_RESPONSE:
+			//alert("b");
+			if (vDB_responseReady === 1) {
+				vDB_responseReady = 0;
+				vDBResumeTestStat = INCOMP_TST_STORE_PARAM_IN_FILE_BEGIN;
+			}
+			break;
+		case INCOMP_TST_STORE_PARAM_IN_FILE_BEGIN:
+			//alert("c");
+			vDB_responseReady = 0;	
+			AjaxStoreTestToResumeData(ETSet_Pressure,ETSet_OpeningRotation,ETSet_ClosingTorque,ETSet_EndTorque,ETSet_Cycles,vDB_TestIdNum[vRowClicked],ET_ResumeTestCompletedCycles);
+			/*alert("ETSet_Pressure:" + ETSet_Pressure);
+			alert("ETSet_OpeningRotation:" + ETSet_OpeningRotation);
+			alert("ETSet_ClosingTorque:" + ETSet_ClosingTorque);
+			alert("ETSet_EndTorque:" + ETSet_EndTorque);
+			alert("ETSet_Cycles:" + ETSet_Cycles);
+			alert("ET_ResumeTestCompletedCycles:" + ET_ResumeTestCompletedCycles);*/
+			
+			vDBResumeTestStat = INCOMP_TST_STORE_PARAM_IN_FILE_AWAIT;
+			break;
+		case INCOMP_TST_STORE_PARAM_IN_FILE_AWAIT:
+		if (vDB_responseReady === 1) {
+			//alert("d");
+			vDB_responseReady = 0;
+			//alert("ET Test ID NUM:" + vDB_TestIdNum[vRowClicked]);
+			vDBResumeTestStat = INCOMP_TST_LOAD_PAGE;
+		}
+			break;
+		case INCOMP_TST_LOAD_PAGE:
+			vFunctionReentryCntr = 0;
+			LoadPage('ConductTest2.html');
+			clearInterval(VDB_GetIncompTstParam);
+			break;
+		default:
+			break;
+	}
+}
+
+function RetrieveTestParamOfTestToResume(){
+	console.log("stat:" + vDBRestartTestStat);
+	console.log("reentry cntr:" + vFunctionReentryCntr);
+	
+	switch (vDBRestartTestStat) {
+		case RESTART_TEST_GET_PARAM:
+			if (vFunctionReentryCntr === 0) {
+				vDB_responseReady = 0;
+				vDBRestartTestStat = RESTART_TEST_FILL_PARAM;
+				AjaxRetrieveTestToResumeData();
+				console.log("Cmd Sent");
+				vFunctionReentryCntr = 1;
+				VDB_GetIncompTstParam = setInterval(RetrieveTestParamOfTestToResume, 100);
+			}
+			break;
+		case RESTART_TEST_FILL_PARAM:
+			if (vDB_responseReady === 1) {
+				console.log("Response Recieved");
+				vDB_responseReady = 0;
+				vDBRestartTestStat = RESTART_TEST_EXIT_ACTION;
+				console.log("ETSet_Pressure:" + ETSet_Pressure);
+				console.log("ETSet_OpeningRotation:" + ETSet_OpeningRotation);
+				console.log("ETSet_ClosingTorque:" + ETSet_ClosingTorque);
+				console.log("ETSet_EndTorque:" + ETSet_EndTorque);
+				console.log("ETSet_Cycles:" + ETSet_Cycles);
+				console.log("ET_ResumeTestCompletedCycles:" + ET_ResumeTestCompletedCycles);
+			}
+			break;
+		case RESTART_TEST_EXIT_ACTION:
+			clearInterval(VDB_GetIncompTstParam);
+			vFunctionReentryCntr = 0;
+			OutletPrGauge = CanvasDrawGauge('OlPrGauge',0,400,8,2,true,'','');		    
+			InletPrGauge = CanvasDrawGauge('InletPrGauge',0,400,4,2,true,'Inlet Pressure','');
+			TqGauge = CanvasDrawGauge('TqGauge',-35,0,7,2,true,'Peak Torque','N-m')
+			  $.each(GrInletconfig.data.datasets, function(i, dataset) {
+			   var background = '#C7FF32';
+			   dataset.borderColor = background;
+			   dataset.backgroundColor = background;
+			   dataset.pointBorderColor = background;
+			   dataset.pointBackgroundColor = background;
+			   dataset.pointBorderWidth = 1;
+		   });
+			 $.each(GrOutletconfig.data.datasets, function(i, dataset) {
+			   var background = '#C7FF32';
+			   dataset.borderColor = background;
+			   dataset.backgroundColor = background;
+			   dataset.pointBorderColor = background;
+			   dataset.pointBackgroundColor = background;
+			   dataset.pointBorderWidth = 1;
+		   });
+   
+		   $.each(GrTqconfig.data.datasets, function(i, dataset) {
+			   var background = '#C7FF32';
+			   dataset.borderColor = background;
+			   dataset.backgroundColor = background;
+			   dataset.pointBorderColor = background;
+			   dataset.pointBackgroundColor = background;
+			   dataset.pointBorderWidth = 1;
+		   });	
+		   ETConduct_ShowHideCanvas('canvasGrInlet');
+		   ETConduct_ShowHideCanvas('canvasGrOutlet');
+		   ETConduct_ShowHideCanvas('canvasGrTq');
+		   hideDiv('divResumeWindow');
+		   hideDiv('divAbortWindow');
+		   ETConduct_ShowHideCanvas('canvasGrInlet');
+		   ETConduct_ShowHideCanvas('canvasGrOutlet');
+		   ETConduct_ShowHideCanvas('canvasGrTq');
+		   //alert('Test id:' + vTestId);    
+		   vDBRestartTestStat = RESTART_TEST_GET_PARAM;
+			break;
+		default:
+			vDBRestartTestStat = RESTART_TEST_GET_PARAM;
+		break;
+	}
+}
+
+
+function ReentrantStoreTestParameters() {
+	console.log("Status:" + vDBStoreTestParamStat);
+	switch (vDBStoreTestParamStat) {
+		case STORE_TEST_PARAM_BEGIN:
+		if (vFunctionReentryCntr === 0) {
+			vDB_responseReady = 0;
+			vDBStoreTestParamStat = STORE_TEST_PARAM_AWAIT;
+			AjaxStoreTestParameters(ETSet_Pressure, ETSet_OpeningRotation, ETSet_ClosingTorque, ETSet_EndTorque, ETSet_Cycles, ETSet_TestId, ETSet_TestId.length, ETSet_TestConductor, ETSet_TestConductor.length);
+			console.log("Cmd Sent");
+			vFunctionReentryCntr = 1;
+			VDB_StoreRcdProcess = setInterval(ReentrantStoreTestParameters, 100);
+		}
+			break;
+		case STORE_TEST_PARAM_AWAIT:
+		if(vDB_responseReady === 1){
+			vDB_responseReady = 0;
+			vDBStoreTestParamStat = STORE_TEST_PARAM_EXIT_ACTION;
+		}
+			break;
+		case STORE_TEST_PARAM_EXIT_ACTION:
+			clearInterval(VDB_StoreRcdProcess);
+			vFunctionReentryCntr = 0;
+			//alert("Stored Params!");
+			LoadPage('testConduct.html');
+			vDBStoreTestParamStat = STORE_TEST_PARAM_BEGIN;
+			break;
+		default:
+			vDBStoreTestParamStat = STORE_TEST_PARAM_BEGIN;
+			break;
+	}
+}
+
+var vResumeTestStat = RESUME_LATER_BEGIN;
+var vAbortTestStat =  ABORT_TEST_BEGIN;
+
+
+			
+function AbortTest(){
+	switch(vAbortTestStat){
+		case ABORT_TEST_BEGIN:	 				
+		break;
+		case ABORT_TEST_EMERGENCY_STOP_MONITOR:
+		break;
+		case ABORT_TEST_UPDATE_STATUS:			
+		break;
+		case ABORT_TEST_AWIT_STATUS_UPDATE_COMP:
+		break;
+		case ABORT_TEST_EXIT_ACTION: 
+		AjaxKillApp();
+		break;
+		default:
+		break;
+
+	}
+	
+	
+	console.log("Abort Test");
+}
+
+function ResumeLater(){
+	switch(vResumeTestStat){
+		case RESUME_LATER_BEGIN: 				
+		break;
+		case RESUME_LATER_EMERGENCY_STOP_MONITOR:
+		break;
+		case RESUME_LATER_UPDATE_STATUS:		
+		break;
+		case RESUME_LATER_AWIT_STATUS_UPDATE_COMP:
+		break;
+		case RESUME_LATER_EXIT_ACTION: 			
+		AjaxKillApp();
+		break;
+		default:
+		break;
+		
+	}
+	EnduranceTestExecuteCurrrentStat = ;
+	
+	console.log("Resume Later");
 }
