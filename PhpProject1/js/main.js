@@ -6,13 +6,17 @@
  * 
  */
 
+//Vars to solve the servo issue
+var vServoAttemptCntr = 0;
+var vPrRlsAttemptCntr = 0;
+var vAjaxServoRespFlag = 0;
 //ViewGenRpt Vars
 var vArrOriginalCursors = new Array(2);
 var viewGenCurrRow = 0;
 var vSelectedRow = 0;
 var vRowClicked = 0;
 var vTestComplete = 0;
-var vSerInterfaceCmd = 0; 
+var vSerInterfaceCmd = 0;
 
 
 
@@ -70,8 +74,6 @@ const ETTEST_PREPARE_TEST_TORQUE_MONITOR = 83;
 const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE = 84;
 const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_CMD_ACC = 85;
 const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR = 86;
-const ETTEST_PREPARE_TEST_RETURN_TO_SRC = 86;
-//var ETTEST_PREPARE_CHECK_VALVE_OPEN = 88;
 const ETTEST_EXEC_CLOSE_VALVE_BEGIN = 99;
 const ETTEST_EXEC_MONITOR_VALVE_CLOSE = 110;
 const ETTEST_EXEC_VALVE_CLOSE_ERROR_ACTION = 120;
@@ -132,11 +134,11 @@ var ET_Prev_Inlet_Pressure = 0;
 var ET_Prev_Outlet_Pressure = 0;
 
 
-var SERVO_CMD_STAT_UNKNOWN = 0;
-var SERVO_CMD_STAT_LOADED = 1;
-var SERVO_CMD_STAT_ACCEPTED = 2;
-var SERVO_CMD_STAT_COMPLETED = 3;
-var SERVO_CMD_STAT_ERR = 4;
+const SERVO_CMD_STAT_UNKNOWN = 0;
+const SERVO_CMD_STAT_LOADED = 1;
+const SERVO_CMD_STAT_ACCEPTED = 2;
+const SERVO_CMD_STAT_COMPLETED = 3;
+const SERVO_CMD_STAT_ERR = 4;
 
 
 
@@ -147,8 +149,8 @@ var PRESSURE_MORE = 1;
 
 
 
-var CW = 1;	//Full Marks for being right handed
-var ACW = 0;	//Zero Marks for being left handed.... Indian Preconcieved notions become predefined definitions!!
+const CW = 1;	//Full Marks for being right handed
+const ACW = 0;	//Zero Marks for being left handed.... Indian Preconcieved notions become predefined definitions!!
 var servoInchStep = 0;
 
 
@@ -255,7 +257,7 @@ var vInitDepressurizationInterval = 10;	//10 --- 10*500 --- 5000mSec
 var vValveCloseTimeoutInterval = 8;//10 --- 10*500 --- 5000mSec
 var vValveInletPrApplicationInterval = 10; //10 --- 10*500 --- 5000mSec
 const vChargedOutletPressureMonitorInterval = 10;//10 --- 10*500 --- 5000mSec
-var vChargedOutletDischargeInterval = 10;//10 --- 10*500 --- 5000mSec
+const vChargedOutletDischargeInterval = 10;//10 --- 10*500 --- 5000mSec
 var vDischargedOutletMonitorInterval = 10;//10 --- 10*500 --- 5000mSec
 var vValveOpenTimeoutInterval = 14;//10 --- 10*500 --- 5000mSec
 var vOpenChannelPressureMonitorInterval = 12;//10 --- 10*500 --- 5000mSec
@@ -466,17 +468,17 @@ const STORE_TEST_PARAM_BEGIN = 1;
 const STORE_TEST_PARAM_AWAIT = 2;
 const STORE_TEST_PARAM_EXIT_ACTION = 3;
 
-const RESUME_LATER_BEGIN 					= 1;
-const RESUME_LATER_EMERGENCY_STOP_MONITOR	= 2;
-const RESUME_LATER_UPDATE_STATUS			= 3;
-const RESUME_LATER_AWIT_STATUS_UPDATE_COMP  = 4;
-const RESUME_LATER_EXIT_ACTION 				= 5;
+const RESUME_LATER_BEGIN = 1;
+const RESUME_LATER_EMERGENCY_STOP_MONITOR = 2;
+const RESUME_LATER_UPDATE_STATUS = 3;
+const RESUME_LATER_AWIT_STATUS_UPDATE_COMP = 4;
+const RESUME_LATER_EXIT_ACTION = 5;
 
-const ABORT_TEST_BEGIN	 					= 1;
-const ABORT_TEST_EMERGENCY_STOP_MONITOR		= 2;
-const ABORT_TEST_UPDATE_STATUS				= 3;
-const ABORT_TEST_AWIT_STATUS_UPDATE_COMP 	= 4;
-const ABORT_TEST_EXIT_ACTION 				= 5;
+const ABORT_TEST_BEGIN = 1;
+const ABORT_TEST_EMERGENCY_STOP_MONITOR = 2;
+const ABORT_TEST_UPDATE_STATUS = 3;
+const ABORT_TEST_AWIT_STATUS_UPDATE_COMP = 4;
+const ABORT_TEST_EXIT_ACTION = 5;
 
 
 
@@ -490,7 +492,7 @@ var vDBRestartTestStat = RESTART_TEST_GET_PARAM;
 var vDBStoreTestParamStat = STORE_TEST_PARAM_BEGIN;
 
 var vResumeTestStat = RESUME_LATER_BEGIN;
-var vAbortTestStat =  ABORT_TEST_BEGIN;
+var vAbortTestStat = ABORT_TEST_BEGIN;
 
 
 var vFunctionReentryCntr = 0;
@@ -2519,7 +2521,7 @@ function AjaxStoreTestParameters(uirTestPressure, uirOpenRotation, frClosingTq, 
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
 	AjaxRequest.onreadystatechange = function () {
-		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200){
+		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			//alert("Store Test Param Result is: " + AjaxRequest.responseText);
 			vDB_responseReady = 1;
 		}
@@ -2665,9 +2667,9 @@ function AjaxServoSetStatus(uirSrvo_DesDegOfRtn, uirDirnOfRtn, frSrvo_DesTq) {
 	AjaxRequest.onreadystatechange = function () {
 		//alert("This is the status:" + AjaxRequest.status);             
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
-
+			vAjaxServoRespFlag = 1;
 		}
-		if(AjaxRequest.status !== 200){
+		if (AjaxRequest.status !== 200) {
 			alert("Failed To Send the Message to Servo.. Retry again!!");
 		}
 		//alert("Set Servo Status: " + AjaxRequest.responseText);
@@ -2733,6 +2735,7 @@ function AjaxSerInterfaceSetDesiredStat(uiDesIsoValve, uiDesInletVentValve, uiDe
 		//if(AjaxRequest.status === 404)
 		//alert("This is the status:" + AjaxRequest.status);             
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
+			console.log("SDONE");
 			lclString = AjaxRequest.responseText;
 			//alert("Response:" + lclString);
 			lclPosnCntr = lclString.search(',');
@@ -2862,7 +2865,7 @@ function AjaxUpdateTestStatus(uiTestId, uiDesiredStatus) {
 
 function AjaxStoreTestRecord() {
 	var urlName = "StoreTestRcd.php?";
-	console.log("Calling Ajax Store Test Record");
+	//console.log("Calling Ajax Store Test Record");
 	var date = new Date();
 	vSampleCntr++;
 	var urlName = "StoreTestRcd.php?b=" + vTestId + "&c=" + CyclesCounter + "&d=" + ET_Inlet_Pressure + "&e=" + ET_Outlet_Pressure + "&f=" + ETSet_UsedClosingTorque + "&g=" + vAppliedTq + "&h=" + vlInletIsolatingStat + "&i=" + vlInletVentingStat + "&j=" + vlOutletExhaustStat + "&k=" + srvoStatus + "&l=" + date.getDate() + "&m=" + (date.getMonth() + 1) + "&n=" + date.getFullYear() + "&o=" + date.getHours() + "&p=" + date.getMinutes() + "&q=" + date.getSeconds() + "&r=" + vSampleCntr;
@@ -2896,6 +2899,7 @@ function AjaxGetCountOfTestBetnDates(uiStartDate, uiStartMonth, uiStartYear, uiE
 			if (vDB_cnt > 0) {
 				CursorModifyEntirePage('wait');
 				clearTable('tblTestList');
+				resizeTableArray(vDB_cnt);
 				vDB_GetRcdDatesId = setInterval(GetRcdBetnDates, 5);
 			}
 			vDB_responseReady = 1;
@@ -2907,14 +2911,28 @@ function AjaxGetCountOfTestBetnDates(uiStartDate, uiStartMonth, uiStartYear, uiE
 }
 
 function resizeTableArray(uirArrSize) {
+	vDB_TestIdNum = [];
+	vDB_TestConductor = [];
+	vDB_TestIdStr = [];
+	vDB_TestDate = [];
+	vDB_Result = [];
+	vDB_srNo = [];
 	vDB_TestIdNum.length = uirArrSize;
 	vDB_TestConductor.length = uirArrSize;
 	vDB_TestIdStr.length = uirArrSize;
 	vDB_TestDate.length = uirArrSize;
 	vDB_Result.length = uirArrSize;
 	vDB_srNo.length = uirArrSize;
+	//alert("length of array:" + vDB_TestIdNum.length);
 	console.log("length of array:" + vDB_TestIdNum.length);
+	/*
+	let lclNodelist = document.querySelectorAll(".classTableElement");
+	let lclCntr;
+	for(lclCntr = 0; lclCntr < lclNodelist; lclCntr++){
 
+		element.parentNode.removeChild(".classTableElement");
+	}
+	*/
 }
 
 function AjaxGetSpecificRcdOfTestBetnDates(uiStartDate, uiStartMonth, uiStartYear, uiEndDate, uiEndMonth, uiEndYear, uiRcdNum) {
@@ -2949,6 +2967,7 @@ function AjaxGetCountOfTestByConductors(strCondName) {
 			vDB_cnt = parseInt(AjaxRequest.responseText);
 			alert("Records by Conductor:" + vDB_cnt);
 			if (vDB_cnt > 0) {
+				resizeTableArray(vDB_cnt);
 				clearTable('tblTestList');
 				CursorModifyEntirePage('wait');
 				vDB_GetRcdByConductor = setInterval(GetRcdByConductors, 10);
@@ -2995,6 +3014,7 @@ function AjaxGetCountOfTestById(strrTestId) {
 			vDB_cnt = parseInt(AjaxRequest.responseText);
 			alert("Count of rcds by conductor:" + vDB_cnt);
 			if (vDB_cnt > 0) {
+				resizeTableArray(vDB_cnt);
 				clearTable('tblTestList');
 				CursorModifyEntirePage('wait');
 				vDB_GetRcdByTestId = setInterval(GetRcdByTestName, 10);
@@ -3034,6 +3054,7 @@ function AjaxGetCountOfIncompleteTests() {
 			vDB_cnt = parseInt(AjaxRequest.responseText);
 			console.log("Count of Incomplete Tests:" + vDB_cnt);
 			if (vDB_cnt > 0) {
+				resizeTableArray(vDB_cnt);
 				console.log("This is the record to get" + vDB_RcdToGet);
 				clearTable('tblTestList');
 				CursorModifyEntirePage('wait');
@@ -3079,9 +3100,9 @@ function AjaxGenerateExcelRpt(uirTestId) {
 	};
 }
 
-function AjaxStoreTestToResumeData(uirTestPressure,uirOpenRotation,frClosingTq,frEndTq,uirTestCycles,ulTestId,ulCompletedCycles){
+function AjaxStoreTestToResumeData(uirTestPressure, uirOpenRotation, frClosingTq, frEndTq, uirTestCycles, ulTestId, ulCompletedCycles) {
 	vDB_responseReady = 0;
-	var urlName = "storeResumeTestParams.php?q=" + uirTestPressure + "&r=" + uirOpenRotation + "&s=" + frClosingTq + "&t=" + frEndTq + "&u=" +  uirTestCycles + "&v=" + ulTestId + "&w=" + ulCompletedCycles;
+	var urlName = "storeResumeTestParams.php?q=" + uirTestPressure + "&r=" + uirOpenRotation + "&s=" + frClosingTq + "&t=" + frEndTq + "&u=" + uirTestCycles + "&v=" + ulTestId + "&w=" + ulCompletedCycles;
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
 	AjaxRequest.open("Get", urlName, true);
@@ -3093,7 +3114,7 @@ function AjaxStoreTestToResumeData(uirTestPressure,uirOpenRotation,frClosingTq,f
 		}
 	};
 }
-function AjaxRetrieveTestToResumeData(){
+function AjaxRetrieveTestToResumeData() {
 	vDB_responseReady = 0;
 	var urlName = "RetrieveResumeTestParams.php";
 	var AjaxRequest;
@@ -3103,60 +3124,60 @@ function AjaxRetrieveTestToResumeData(){
 	AjaxRequest.onreadystatechange = function () {
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			console.log("AjaxRetrieveTestToResumeData Complete");
-				lclString = AjaxRequest.responseText;
-				
-				lclPosnCntr = lclString.search(';');
-				subString = lclString.slice(0, lclPosnCntr);
-				console.log("Split String:" + subString);
-				ETSet_Pressure = parseInt(subString);
-				subString = subString + ';';
-				lclString = lclString.replace(subString, '');
-		
-				lclPosnCntr = lclString.search(';');
-				subString = lclString.slice(0, lclPosnCntr);
-				console.log("Split String:" + subString);
-				ETSet_OpeningRotation = parseInt(subString);
-				subString = subString + ';';
-				lclString = lclString.replace(subString, '');
-		
-				lclPosnCntr = lclString.search(';');
-				subString = lclString.slice(0, lclPosnCntr);
-				console.log("Split String:" + subString);
-				ETSet_ClosingTorque = parseFloat(subString);
-				subString = subString + ';';
-				lclString = lclString.replace(subString, '');
-		
-				lclPosnCntr = lclString.search(';');
-				subString = lclString.slice(0, lclPosnCntr);
-				console.log("Split String:" + subString);
-				ETSet_EndTorque = parseFloat(subString);
-				subString = subString + ';';
-				lclString = lclString.replace(subString, '');
-		
-				lclPosnCntr = lclString.search(';');
-				subString = lclString.slice(0, lclPosnCntr);
-				console.log("Split String:" + subString);
-				ETSet_Cycles = parseInt(subString);
-				subString = subString + ';';
-				lclString = lclString.replace(subString, '');
+			lclString = AjaxRequest.responseText;
 
-				lclPosnCntr = lclString.search(';');
-				subString = lclString.slice(0, lclPosnCntr);
-				console.log("Split String:" + subString);
-				ET_ResumeTestCompletedCycles = parseInt(subString);
-				console.log("ET_ResumeTestCompletedCycles:" + ET_ResumeTestCompletedCycles);
-				subString = subString + ';';
-				lclString = lclString.replace(subString, '');
-		
-				console.log("Remaining String:" + lclString);
-				vTestId = parseInt(lclString);
-				console.log("Test ID:" + vTestId);
-				vDB_responseReady = 1;
+			lclPosnCntr = lclString.search(';');
+			subString = lclString.slice(0, lclPosnCntr);
+			console.log("Split String:" + subString);
+			ETSet_Pressure = parseInt(subString);
+			subString = subString + ';';
+			lclString = lclString.replace(subString, '');
+
+			lclPosnCntr = lclString.search(';');
+			subString = lclString.slice(0, lclPosnCntr);
+			console.log("Split String:" + subString);
+			ETSet_OpeningRotation = parseInt(subString);
+			subString = subString + ';';
+			lclString = lclString.replace(subString, '');
+
+			lclPosnCntr = lclString.search(';');
+			subString = lclString.slice(0, lclPosnCntr);
+			console.log("Split String:" + subString);
+			ETSet_ClosingTorque = parseFloat(subString);
+			subString = subString + ';';
+			lclString = lclString.replace(subString, '');
+
+			lclPosnCntr = lclString.search(';');
+			subString = lclString.slice(0, lclPosnCntr);
+			console.log("Split String:" + subString);
+			ETSet_EndTorque = parseFloat(subString);
+			subString = subString + ';';
+			lclString = lclString.replace(subString, '');
+
+			lclPosnCntr = lclString.search(';');
+			subString = lclString.slice(0, lclPosnCntr);
+			console.log("Split String:" + subString);
+			ETSet_Cycles = parseInt(subString);
+			subString = subString + ';';
+			lclString = lclString.replace(subString, '');
+
+			lclPosnCntr = lclString.search(';');
+			subString = lclString.slice(0, lclPosnCntr);
+			console.log("Split String:" + subString);
+			ET_ResumeTestCompletedCycles = parseInt(subString);
+			console.log("ET_ResumeTestCompletedCycles:" + ET_ResumeTestCompletedCycles);
+			subString = subString + ';';
+			lclString = lclString.replace(subString, '');
+
+			console.log("Remaining String:" + lclString);
+			vTestId = parseInt(lclString);
+			console.log("Test ID:" + vTestId);
+			vDB_responseReady = 1;
 		}
 	};
 }
 
-function AjaxKillApp(){
+function AjaxKillApp() {
 	var urlName = "killApp.php";
 	var AjaxRequest;
 	AjaxRequest = new XMLHttpRequest();
@@ -3348,10 +3369,7 @@ function ExecuteEnduranceTest() {
 			vSampleCntr = 0;	//Reset the sample counter
 			vDlyCntr = 0;   //Reset Delay	    
 			ETSet_UsedClosingTorque = ETSet_ClosingTorque;
-			vTqMaxTolerance = (ETSet_UsedClosingTorque * 3) / 100;
-			//alert("Used Closing:" + ETSet_UsedClosingTorque);
-			//alert("Set Closing Torque:" + ETSet_ClosingTorque);
-			//alert("Max Tolerance:" + vTqMaxTolerance);
+			vTqMaxTolerance = (ETSet_UsedClosingTorque * 0.03);
 			EnduranceTestExecuteCurrrentStat = ETTEST_INIT_BEGIN;
 			break;
 
@@ -3408,7 +3426,7 @@ function ExecuteEnduranceTest() {
 			strET_Test_Status = "Torque Calibration In Progress";
 			vET_TestStatusUpdateStausFlag = 1;
 			EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL;
-			//EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_APPLY_INLET;
+
 			break;
 
 		case ETTEST_PREPARE_TEST_TORQUE_CAL:
@@ -3429,7 +3447,7 @@ function ExecuteEnduranceTest() {
 							//alert("Seems More Torque was applied!" + "\nPeak Neg Tq:" + vTqPeakNegativeVal + "\n Set Negative Tq:" + ETSet_UsedClosingTorque);
 							if (vTqPeakNegativeVal - ETSet_UsedClosingTorque > vTqMaxTolerance) {
 								//alert("Torque Modification is required");
-								var diff;
+								let diff;
 								diff = vTqPeakNegativeVal - ETSet_UsedClosingTorque;
 								if (diff > 5) {
 									alert("Too large a difference! No point in making adjustments!");
@@ -3448,10 +3466,10 @@ function ExecuteEnduranceTest() {
 							//alert ("Seems Less Torque was applied!");
 							if (ETSet_UsedClosingTorque - vTqPeakNegativeVal > vTqMaxTolerance) {
 								//alert("Torque Modification is required");
-								var diff2;
+								let diff2;
 								diff2 = (ETSet_ClosingTorque - vTqPeakNegativeVal);
 								if (diff2 > 5) {
-									//alert("Too large a difference! No point in making adjustments!");
+									alert("Too large a difference! No point in making adjustments!");
 								}
 								else {
 									//alert("Increasing the pgmd Tq Value");
@@ -3472,18 +3490,17 @@ function ExecuteEnduranceTest() {
 					vTqPeakPositiveVal = 0;
 					vTqPeakNegativeVal = 0;
 					if (EnduranceTestExecuteCurrrentStat !== vET_Return_Status) {
+						vAjaxServoRespFlag = 0;
 						AjaxServoSetStatus((ETSet_OpeningRotation * 4), CW, vAppliedTq);//IF 360 closing pgmd, it will try and go to 360*4 to close the valve!
 						vServoDelayCntr = 0;
 						EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR_SRVO_BEGIN;
 					}
 				}
 				else {//Declare an Error
-					//EnduranceTestExecuteCurrrentStat = ;
 					alert("AAA");
 					ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
 					ET_ServoMechErrorCntr++;
 					ET_ShowHideError();
-					//alert("\n Error!!!");
 				}
 			}
 			else {
@@ -3493,12 +3510,19 @@ function ExecuteEnduranceTest() {
 			break;
 		case ETTEST_PREPARE_TEST_TORQUE_MONITOR_SRVO_BEGIN:
 			vServoDelayCntr++;
-			if (srvoStatus != SERVO_CMD_STAT_COMPLETED) {
-				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR;
-				vServoDelayCntr = 0;
+			if (vAjaxServoRespFlag === 1) {
+				console.log("cmmmmm");
+				AjaxServoGetStatus();
+				console.log("AGS: 1:" + srvoStatus);
+				if (srvoStatus === SERVO_CMD_STAT_ACCEPTED || srvoStatus === SERVO_CMD_STAT_COMPLETED) {
+					EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR;
+					vServoDelayCntr = 0;
+				}
+
 			}
-			if (vServoDelayCntr > 10) {	//Indicates that for last 5 seconds no movement detected! -> could mean that valve was already closed!
-				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR;
+			if (vServoDelayCntr > 20) {
+				//alert("Calibration Failure: Closure Motion did not begin!");
+				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL;
 				vServoDelayCntr = 0;
 			}
 			break;
@@ -3508,54 +3532,53 @@ function ExecuteEnduranceTest() {
 			vlRstRlyDesired = 0;
 			vCycleInProgress = 0;
 			vServoDelayCntr++;
-			/*
-			if(vServoDelayCntr > 0){
-				AjaxServoGetStatus();
-				console.log("SerVo Status:" + srvoStatus);
-			}
-			*/
-
-			if (vServoDelayCntr > 5)   //ToDo: Servo Timeout Error
-			{
-				//alert("Servo Time Out" + srvoStatus);
-				//alert("Peak Negative Tq:" + vTqPeakNegativeVal);
-				//EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_INCH_CMD;
-				AjaxServoGetStatus();
-				if (srvoStatus === SERVO_CMD_STAT_COMPLETED) {
+			AjaxServoGetStatus();
+			console.log("AGS: 2:" + srvoStatus);
+			console.log("Pk Tq:" + vTqNegativeVal);
+			console.log("Set Tq:" + ETSet_ClosingTorque);
+			if ((srvoStatus === SERVO_CMD_STAT_ACCEPTED) || (srvoStatus === SERVO_CMD_STAT_COMPLETED)) {
+				console.log("AA");
+				if ((vTqNegativeVal * -1) > (0.5 * ETSet_ClosingTorque)) {
+					console.log("XX");
 					EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE;
-					//alert("DDDDD");
-				}
-				if (vServoDelayCntr > 100) {
-					//alert("Timeout Detected!");
-					alert("BBB");
-					ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
-					ET_ServoMechErrorCntr++;
-					ET_ShowHideError();
+					vServoDelayCntr = 0;
 				}
 			}
-
-			//}
-
+			if (vServoDelayCntr > 100) {
+				//alert("Timeout Detected!");
+				alert("Servo Mechanism Error");
+				ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
+				ET_ServoMechErrorCntr++;
+				ET_ShowHideError();
+				vServoDelayCntr = 0;
+			}
 			break;
 		case ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE:
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
 			vCycleInProgress = 0;
+			vAjaxServoRespFlag = 0;
 			vTqCalCntr++;
 			AjaxServoSetStatus(ETSet_OpeningRotation, ACW, ETSet_ClosingTorque + 10);
 			vServoDelayCntr = 0;
-			EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR;
+			EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_CMD_ACC;
 			break;
 
 		case ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_CMD_ACC:
-			AjaxServoGetStatus();
 			vServoDelayCntr++;
-			if (srvoStatus != SERVO_CMD_STAT_COMPLETED) {
-				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR;
+			if (vAjaxServoRespFlag === 1) {
+				AjaxServoGetStatus();
+				console.log("AGS: 3:" + srvoStatus);
+
+				if ((srvoStatus === SERVO_CMD_STAT_ACCEPTED) || (srvoStatus === SERVO_CMD_STAT_COMPLETED)) {
+					EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR;
+				}
+				vAjaxServoRespFlag = 0;
 			}
-			if (vServoDelayCntr > 10) {
-				vServoDelayCntr = 0;
-				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR;
+
+			if (vServoDelayCntr > 20) {
+				alert("Calibration Failure: Opening Motion did not begin!");
+				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE;
 			}
 			break;
 
@@ -3565,23 +3588,17 @@ function ExecuteEnduranceTest() {
 			vlRstRlyDesired = 0;
 			vServoDelayCntr++;
 			AjaxServoGetStatus();
-			if (vServoDelayCntr > 2) {
-				if (srvoStatus === SERVO_CMD_STAT_COMPLETED) {
-					//alert("Completion Detected!");
-					EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL;
-				}
-				else {
-					if ((srvoStatus === SERVO_CMD_STAT_ERR) || (vServoDelayCntr > 100)) {
-						if (srvoStatus === SERVO_CMD_STAT_ERR) {
-							alert("CCC");
-							ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
-							ET_ServoMechErrorCntr++;
-							ET_ShowHideError();
-						}
-						else{
-							EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE;
-						}
-					}
+			console.log("AGS: 4:" + srvoStatus);
+			if (srvoStatus === SERVO_CMD_STAT_COMPLETED) {
+				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL;
+				vServoDelayCntr = 0;
+			}
+			else {
+				if (vServoDelayCntr > 25) {
+					alert("Servo Mechanism Error Detected During Calibration - Valve Opening");
+					ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
+					ET_ServoMechErrorCntr++;
+					ET_ShowHideError();
 				}
 			}
 			break;
@@ -3592,6 +3609,7 @@ function ExecuteEnduranceTest() {
 			vlOutletExhaustDesired = 0;
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
+			vDlyCntr = 0;
 			strET_Test_Status = "Applying Inlet Pressure..";
 			vET_TestStatusUpdateStausFlag = 1;
 			EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_AWAIT_INLET_APPLICATION_DLY;
@@ -3656,6 +3674,7 @@ function ExecuteEnduranceTest() {
 			}
 			if ((vReturnVal === PRESSURE_OK) || (vReturnVal === PRESSURE_MORE)) {
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;
+				vServoDelayCntr = 0;
 				ET_ErrorId = 0;
 			}
 			else {//indicates that there is insufficient pressure!
@@ -3684,30 +3703,32 @@ function ExecuteEnduranceTest() {
 				vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
 			strET_Test_Status = "Closing Test Valve";
+			vServoAttemptCntr = 0;	//This counter is for counting the number of attempts for closing the T/P.
 			vET_TestStatusUpdateStausFlag = 1;
 			AjaxServoGetStatus();
-			if (srvoStatus != SERVO_CMD_STAT_ACCEPTED) {
+			if (srvoStatus !== SERVO_CMD_STAT_ACCEPTED) {
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_STD_ACTION;
 			}
 			else {
-				//alert("This is the status at Closing:" + srvoStatus);
-				//alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-				//alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-				//alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-				break;
-			}
+				vServoDelayCntr++;
+				if (vServoDelayCntr > 30) {
+					alert("This is the status at Closing:" + srvoStatus);
+					alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
+				}
 
+			}
+			break;
 
 		case ETTEST_EXEC_VALVE_CLOSE_STD_ACTION:
-		//alert("ZCC");
+			//alert("ZCC");
 			vCycleInProgress = 1;
 			vlInletIsolatingDesired = 1;
 			vlIntletVentingDesired = 0;
 			vlOutletExhaustDesired = 0;
-			if(vlCntrRlyDesired === 1)
+			if (vlCntrRlyDesired === 1)
 				vlCntrRlyDesired = 1;
 			else
-				vlCntrRlyDesired = 0;				
+				vlCntrRlyDesired = 0;
 
 			vlRstRlyDesired = 0;
 
@@ -3718,7 +3739,7 @@ function ExecuteEnduranceTest() {
 				//alert("Peak Positive Tq:" + vTqPeakPositiveVal);
 				//alert("Peak Negative Tq:" + vTqPeakNegativeVal);
 
-				if (vTqPeakNegativeVal > (ETSet_UsedClosingTorque + ETSet_UsedClosingTorque/20)) {
+				if (vTqPeakNegativeVal > (ETSet_UsedClosingTorque + ETSet_UsedClosingTorque / 20)) {
 					//alert("Seems More Torque was applied!" + "\nPeak Neg Tq:" + vTqPeakNegativeVal + "\n Set Negative Tq:" + ETSet_UsedClosingTorque);
 					if (vTqPeakNegativeVal - ETSet_UsedClosingTorque > vTqMaxTolerance) {
 						//alert("Torque Modification is required");
@@ -3732,7 +3753,7 @@ function ExecuteEnduranceTest() {
 							//alert("Decreasing the pgmd Tq Value" + "\nvAppliedTq" + vAppliedTq + "\nETSet_UsedClosingTorque" + ETSet_UsedClosingTorque);
 							//vAppliedTq = ETSet_UsedClosingTorque - (vTqPeakNegativeVal - ETSet_UsedClosingTorque);
 							//vAppliedTq = vAppliedTq - ((vTqPeakNegativeVal - ETSet_UsedClosingTorque) * 0.2);
-							vAppliedTq = vAppliedTq - ((vAppliedTq *2)/100);
+							vAppliedTq = vAppliedTq - ((vAppliedTq * 2) / 100);
 							//alert("New Torque to be Applied:",vAppliedTq);
 						}
 					}
@@ -3740,7 +3761,7 @@ function ExecuteEnduranceTest() {
 						//alert("Torque Modification is not required!");
 					}
 				}
-				if (vTqPeakNegativeVal < (ETSet_UsedClosingTorque - ETSet_UsedClosingTorque/20)) {
+				if (vTqPeakNegativeVal < (ETSet_UsedClosingTorque - ETSet_UsedClosingTorque / 20)) {
 					//alert ("Seems Less Torque was applied!");
 					if (ETSet_UsedClosingTorque - vTqPeakNegativeVal > vTqMaxTolerance) {
 						//alert("Torque Modification is required");
@@ -3753,7 +3774,7 @@ function ExecuteEnduranceTest() {
 							//alert("Increasing the pgmd Tq Value"+ "\nvAppliedTq" + vAppliedTq + "\nETSet_UsedClosingTorque" + ETSet_UsedClosingTorque);
 							//vAppliedTq = ETSet_UsedClosingTorque + (vTqPeakNegativeVal - ETSet_ClosingTorque);
 							//vAppliedTq = vAppliedTq + ((ETSet_UsedClosingTorque - vTqPeakNegativeVal) * 0.2);
-							vAppliedTq = vAppliedTq + ((vAppliedTq * 2)/100);
+							vAppliedTq = vAppliedTq + ((vAppliedTq * 2) / 100);
 							//alert("New Torque to be Applied:",vAppliedTq);
 						}
 					}
@@ -3781,21 +3802,17 @@ function ExecuteEnduranceTest() {
 			//alert("ZDD:" + vServoDelayCntr);
 			AjaxServoGetStatus();
 			vServoDelayCntr++;
-			if (srvoStatus != SERVO_CMD_STAT_COMPLETED) {
-				tqAquireDelayCntr = 0;
-				vServoDelayCntr = 0;
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_MONITOR;
+			if (vServoDelayCntr > 4) {
+				if (srvoStatus === SERVO_CMD_STAT_ACCEPTED) {
+					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_MONITOR;
+					tqAquireDelayCntr = 0;
+					vServoDelayCntr = 0;
+				}
 			}
-			if (vServoDelayCntr > 10) {
-				tqAquireDelayCntr = 0;
-				vServoDelayCntr = 0;
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_MONITOR;
-			}
-
 			break;
 
 		case ETTEST_EXEC_VALVE_CLOSE_MONITOR:
-		//alert("ZEE");
+			//alert("ZEE");
 			vCycleInProgress = 1;
 			vlInletIsolatingDesired = 1;
 			vlIntletVentingDesired = 0;
@@ -3806,27 +3823,33 @@ function ExecuteEnduranceTest() {
 			AjaxServoGetStatus();
 			console.log("Servo Status:" + srvoStatus);
 			console.log("vServoDelayCntr:" + vServoDelayCntr);
-			if ((srvoStatus === SERVO_CMD_STAT_COMPLETED) || (vServoDelayCntr > 400)) {
-				//console.log("Servo Status:" + srvoStatus);
-				//console.log("vServoDelayCntr:" + vServoDelayCntr);
-				//console.log("Peak Neg. Tq:" + vTqPeakNegativeVal);
-				if (vTqPeakNegativeVal > (0.8 * ETSet_UsedClosingTorque))
+			switch (srvoStatus) {
+				case SERVO_CMD_STAT_COMPLETED:
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_BEGIN;
-				else {//Indicates Closing Mechanism Failed!
-					tqAquireDelayCntr++;
-					if (tqAquireDelayCntr > 10) {
-						EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;
-						alert("Peak Negative Tq Val:" + vTqPeakNegativeVal);
-						alert("Servo Delay Counter:"+ vServoDelayCntr);
-						alert("Servo Status:"+ srvoStatus);
-						alert("DDD");
-						ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
-						ET_ServoMechErrorCntr++;
-						ET_ShowHideError();
-					}
-				}
-			}
+					break;
 
+				case SERVO_CMD_STAT_ACCEPTED:
+					if (vTqPeakNegativeVal > (0.8 * ETSet_UsedClosingTorque)) {
+						EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_BEGIN;
+					}
+					else {
+						if (vServoDelayCntr > 40) {	//In 20 seconds the servo should be able to make more than 4 rotations
+							vServoAttemptCntr++;
+							if (vServoAttemptCntr < 10)
+								EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_STD_ACTION;
+							else {
+								ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
+								ET_ServoMechErrorCntr++;
+								ET_ShowHideError();
+							}
+						}
+					}
+					break;
+
+				default:
+					alert("Unexpected Servo Status:" + srvoStatus);
+					break;
+			}
 			break;
 		case ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_BEGIN:
 			//alert("ZFF");
@@ -3851,13 +3874,13 @@ function ExecuteEnduranceTest() {
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
 			vDlyCntr++;
-		
 
-			let diffPr = ET_Inlet_Pressure - ET_Outlet_Pressure; 
-			console.log("OP:",ET_Outlet_Pressure);
-			console.log("IP:",ET_Inlet_Pressure);
-			console.log("Diff:",diffPr);
-			console.log("Dly:",vDlyCntr);
+
+			let diffPr = ET_Inlet_Pressure - ET_Outlet_Pressure;
+			console.log("OP:", ET_Outlet_Pressure);
+			console.log("IP:", ET_Inlet_Pressure);
+			console.log("Diff:", diffPr);
+			console.log("Dly:", vDlyCntr);
 			//diffPr = 100;	//DEBUG: Remove Later!!!!****
 			if (diffPr > 10) {//Error Condition Jig/Seat Leakage	
 				alert("Jig Leakage Detected!!!");
@@ -3867,7 +3890,7 @@ function ExecuteEnduranceTest() {
 			}
 			else {
 				if (vDlyCntr > vChargedOutletPressureMonitorInterval) {
-					console.log("cntr:" + vDlyCntr + "Interval" + vChargedOutletPressureMonitorInterval );
+					console.log("cntr:" + vDlyCntr + "Interval" + vChargedOutletPressureMonitorInterval);
 					vDlyCntr = 0;
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_INTERVAL_COMP_ACTION;
 				}
@@ -3931,6 +3954,7 @@ function ExecuteEnduranceTest() {
 			vDlyCntr = 0;
 			strET_Test_Status = "Venting Outlet Pressure";
 			vET_TestStatusUpdateStausFlag = 1;
+			vPrRlsAttemptCntr = 0;
 			EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_DISCHARGE_INTERVAL_AWAIT;
 			//alert("Q");
 			break;
@@ -3942,8 +3966,20 @@ function ExecuteEnduranceTest() {
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
 			vDlyCntr++;
-			if (vDlyCntr > vChargedOutletDischargeInterval)
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_DISCHARGE_INTERVAL_COMPLETE;
+			if (vDlyCntr > vChargedOutletDischargeInterval) {
+				if (vPrRlsAttemptCntr < 3) {
+					if (ET_Outlet_Pressure >= 5) {
+						vDlyCntr = 1;
+						vPrRlsAttemptCntr++;
+					}
+					else {
+						EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_DISCHARGE_INTERVAL_COMPLETE;
+					}
+				}
+				else {
+					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_DISCHARGE_INTERVAL_COMPLETE;
+				}
+			}
 			//alert("R");
 			break;
 		case ETTEST_EXEC_DISCHARGE_INTERVAL_COMPLETE:
@@ -4048,13 +4084,10 @@ function ExecuteEnduranceTest() {
 				//EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_OPEN_VALVE_BEGIN;
 				//Reset the values of Peak torque Values
 				vTqPeakPositiveVal = 0;
-				//vTqPeakNegativeVal = vAppliedTq;
-				//vAppliedTq = vAppliedTq + (vAppliedTq/20);
 			}
 			alert("This is the modified Torque:" + ETSet_UsedClosingTorque);
 
-			//Remove this when removing comments on top!!!
-			//EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_OPEN_VALVE_BEGIN;
+
 			break;
 
 		case ETTEST_EXEC_OPEN_VALVE_BEGIN:
@@ -4068,8 +4101,9 @@ function ExecuteEnduranceTest() {
 			strET_Test_Status = "Opening Test Valve";
 			vET_TestStatusUpdateStausFlag = 1;
 
-			if (srvoStatus === SERVO_CMD_STAT_COMPLETED || srvoStatus === SERVO_CMD_STAT_UNKNOWN) {
+			if (srvoStatus === SERVO_CMD_STAT_COMPLETED || srvoStatus === SERVO_CMD_STAT_ACCEPTED) {
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN;
+				vServoAttemptCntr = 0;
 				//alert("Servo Status" + srvoStatus);
 			}
 			else {
@@ -4091,17 +4125,23 @@ function ExecuteEnduranceTest() {
 			vlRstRlyDesired = 0;
 			//alert("B");
 			AjaxServoSetStatus(ETSet_OpeningRotation, ACW, ETSet_ClosingTorque + 10);
+			vServoAttemptCntr++;
 			vServoDelayCntr = 0;
 			EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_OPEN;
 		//break;
 		case ETTEST_EXEC_MONITOR_VALVE_OPEN_BEGIN:
 			AjaxServoGetStatus();
 			vServoDelayCntr++;
-			if (srvoStatus != SERVO_CMD_STAT_COMPLETED)
+			if (srvoStatus == SERVO_CMD_STAT_ACCEPTED) {
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_OPEN;
+				vServoDelayCntr = 0;
+			}
 			if (vServoDelayCntr > 10) {
 				vServoDelayCntr = 0;
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_OPEN;
+				if (vServoAttemptCntr < 10)
+					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN;
+				else
+					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION;
 			}
 			break;
 		case ETTEST_EXEC_MONITOR_VALVE_OPEN:
@@ -4118,10 +4158,7 @@ function ExecuteEnduranceTest() {
 				vServoDelayCntr++;
 				if ((srvoStatus === SERVO_CMD_STAT_ERR) || (vServoDelayCntr > 44))   //ToDo: Servo Error Detected
 				{
-					if ((ET_Inlet_Pressure - ET_Outlet_Pressure) > 10)
-						EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION;
-					else
-						EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_STD_ACTION;
+					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION;
 					ET_ValveOpenErrCntr = 0;
 				}
 			}
@@ -4313,7 +4350,8 @@ function ExecuteEnduranceTest() {
 			vlCntrRlyDesired = 0;
 			vlRstRlyDesired = 0;
 			vDlyCntr = 0;
-			if(CyclesCounter >= ETSet_Cycles){
+			if (CyclesCounter >= ETSet_Cycles) {
+				AjaxUpdateTestStatus(vTestId, ET_TEST_ID_COMPLETE);
 				alert("Test Complete");
 				AjaxKillApp();
 			}
@@ -4365,7 +4403,6 @@ function ExecuteEnduranceTest() {
 		GraphOutletAdd();
 	if (varGrTq_sh === 1)
 		GraphTorqueAdd();
-		console.log("ET"+ EnduranceTestExecuteCurrrentStat);
 }
 
 function UpdateCycleStatus() {
@@ -4681,15 +4718,13 @@ function clearTable(tableId) {
 	if (lclCntr > 1) {
 		//alert("Deletion of rows required!");
 		lclCntr--;//Now we have exact number of rows to be deleted!
-		//var rowToDel;
 		$('.td0').remove();
 		$('.td1').remove();
 		$('.td2').remove();
 		$('.td3').remove();
 		$('.td4').remove();
-	}
-	else {
-		//alert("These are no rows to delete");
+		$('.classTableElement').remove();
+
 	}
 }
 
@@ -4765,7 +4800,8 @@ function AddEventsToTableForEachRow(tableId) {
 	//Get the NodeList
 	//console.log("Function Called!");
 	var nodelist = document.querySelectorAll(".classTableElement");
-	var lclCntr = 0;
+	//alert("Nodelist length" + nodelist.length);
+	let lclCntr = 0;
 	//console.log("Elements found:" + nodelist.length);
 	//Set ID's for all the elements
 	var strInloop = "";
@@ -4785,7 +4821,8 @@ function AddEventsToTableForEachRow(tableId) {
 		//console.log("Element[" + lclCntr + "] = " + rowElement[lclCntr]);
 	}
 	//This loop adds events for each element
-	console.log("Adding Events.");
+
+	//alert("Node List Length:" + nodelist.length);
 	for (lclCntr = 0; lclCntr < nodelist.length; lclCntr++) {
 		let closureVar = lclCntr;
 		rowElement[closureVar].addEventListener("mouseover", function () {
@@ -4797,9 +4834,9 @@ function AddEventsToTableForEachRow(tableId) {
 		rowElement[closureVar].addEventListener("click", function () {
 			TableRowClickAction(closureVar);
 		}, false);
-		console.log("Adding Events:" + lclCntr);
+		//alert("Adding Events:" + lclCntr);
 	}
-	console.log("Job Done.");
+	//console.log("Job Done.");
 }
 
 function TableRowClickAction(rRowNumber) {
@@ -4811,6 +4848,7 @@ function TableRowClickAction(rRowNumber) {
 	console.log("Test Result:"+ vDB_Result[rRowNumber] );
 	*/
 	vRowClicked = rRowNumber;
+	//alert("This is the row clicked:" + vRowClicked);
 
 	EraseCanvasText('canvasSelectTest', 1);
 	EraseCanvasText('canvasSelectTest', 2);
@@ -5061,24 +5099,24 @@ function ResumeSelectedTest() {
 			break;
 		case INCOMP_TST_STORE_PARAM_IN_FILE_BEGIN:
 			//alert("c");
-			vDB_responseReady = 0;	
-			AjaxStoreTestToResumeData(ETSet_Pressure,ETSet_OpeningRotation,ETSet_ClosingTorque,ETSet_EndTorque,ETSet_Cycles,vDB_TestIdNum[vRowClicked],ET_ResumeTestCompletedCycles);
+			vDB_responseReady = 0;
+			AjaxStoreTestToResumeData(ETSet_Pressure, ETSet_OpeningRotation, ETSet_ClosingTorque, ETSet_EndTorque, ETSet_Cycles, vDB_TestIdNum[vRowClicked], ET_ResumeTestCompletedCycles);
 			/*alert("ETSet_Pressure:" + ETSet_Pressure);
 			alert("ETSet_OpeningRotation:" + ETSet_OpeningRotation);
 			alert("ETSet_ClosingTorque:" + ETSet_ClosingTorque);
 			alert("ETSet_EndTorque:" + ETSet_EndTorque);
 			alert("ETSet_Cycles:" + ETSet_Cycles);
 			alert("ET_ResumeTestCompletedCycles:" + ET_ResumeTestCompletedCycles);*/
-			
+
 			vDBResumeTestStat = INCOMP_TST_STORE_PARAM_IN_FILE_AWAIT;
 			break;
 		case INCOMP_TST_STORE_PARAM_IN_FILE_AWAIT:
-		if (vDB_responseReady === 1) {
-			//alert("d");
-			vDB_responseReady = 0;
-			//alert("ET Test ID NUM:" + vDB_TestIdNum[vRowClicked]);
-			vDBResumeTestStat = INCOMP_TST_LOAD_PAGE;
-		}
+			if (vDB_responseReady === 1) {
+				//alert("d");
+				vDB_responseReady = 0;
+				//alert("ET Test ID NUM:" + vDB_TestIdNum[vRowClicked]);
+				vDBResumeTestStat = INCOMP_TST_LOAD_PAGE;
+			}
 			break;
 		case INCOMP_TST_LOAD_PAGE:
 			vFunctionReentryCntr = 0;
@@ -5090,10 +5128,10 @@ function ResumeSelectedTest() {
 	}
 }
 
-function RetrieveTestParamOfTestToResume(){
+function RetrieveTestParamOfTestToResume() {
 	console.log("stat:" + vDBRestartTestStat);
 	console.log("reentry cntr:" + vFunctionReentryCntr);
-	
+
 	switch (vDBRestartTestStat) {
 		case RESTART_TEST_GET_PARAM:
 			if (vFunctionReentryCntr === 0) {
@@ -5122,48 +5160,48 @@ function RetrieveTestParamOfTestToResume(){
 		case RESTART_TEST_EXIT_ACTION:
 			clearInterval(VDB_GetIncompTstParam);
 			vFunctionReentryCntr = 0;
-			OutletPrGauge = CanvasDrawGauge('OlPrGauge',0,400,8,2,true,'','');		    
-			InletPrGauge = CanvasDrawGauge('InletPrGauge',0,400,4,2,true,'Inlet Pressure','');
-			TqGauge = CanvasDrawGauge('TqGauge',-35,0,7,2,true,'Peak Torque','N-m')
-			  $.each(GrInletconfig.data.datasets, function(i, dataset) {
-			   var background = '#C7FF32';
-			   dataset.borderColor = background;
-			   dataset.backgroundColor = background;
-			   dataset.pointBorderColor = background;
-			   dataset.pointBackgroundColor = background;
-			   dataset.pointBorderWidth = 1;
-		   });
-			 $.each(GrOutletconfig.data.datasets, function(i, dataset) {
-			   var background = '#C7FF32';
-			   dataset.borderColor = background;
-			   dataset.backgroundColor = background;
-			   dataset.pointBorderColor = background;
-			   dataset.pointBackgroundColor = background;
-			   dataset.pointBorderWidth = 1;
-		   });
-   
-		   $.each(GrTqconfig.data.datasets, function(i, dataset) {
-			   var background = '#C7FF32';
-			   dataset.borderColor = background;
-			   dataset.backgroundColor = background;
-			   dataset.pointBorderColor = background;
-			   dataset.pointBackgroundColor = background;
-			   dataset.pointBorderWidth = 1;
-		   });	
-		   ETConduct_ShowHideCanvas('canvasGrInlet');
-		   ETConduct_ShowHideCanvas('canvasGrOutlet');
-		   ETConduct_ShowHideCanvas('canvasGrTq');
-		   hideDiv('divResumeWindow');
-		   hideDiv('divAbortWindow');
-		   //ETConduct_ShowHideCanvas('canvasGrInlet');
-		   //ETConduct_ShowHideCanvas('canvasGrOutlet');
-		   //ETConduct_ShowHideCanvas('canvasGrTq');
-		   //alert('Test id:' + vTestId);    
-		   vDBRestartTestStat = RESTART_TEST_GET_PARAM;
+			OutletPrGauge = CanvasDrawGauge('OlPrGauge', 0, 400, 8, 2, true, '', '');
+			InletPrGauge = CanvasDrawGauge('InletPrGauge', 0, 400, 4, 2, true, 'Inlet Pressure', '');
+			TqGauge = CanvasDrawGauge('TqGauge', -35, 0, 7, 2, true, 'Peak Torque', 'N-m')
+			$.each(GrInletconfig.data.datasets, function (i, dataset) {
+				var background = '#C7FF32';
+				dataset.borderColor = background;
+				dataset.backgroundColor = background;
+				dataset.pointBorderColor = background;
+				dataset.pointBackgroundColor = background;
+				dataset.pointBorderWidth = 1;
+			});
+			$.each(GrOutletconfig.data.datasets, function (i, dataset) {
+				var background = '#C7FF32';
+				dataset.borderColor = background;
+				dataset.backgroundColor = background;
+				dataset.pointBorderColor = background;
+				dataset.pointBackgroundColor = background;
+				dataset.pointBorderWidth = 1;
+			});
+
+			$.each(GrTqconfig.data.datasets, function (i, dataset) {
+				var background = '#C7FF32';
+				dataset.borderColor = background;
+				dataset.backgroundColor = background;
+				dataset.pointBorderColor = background;
+				dataset.pointBackgroundColor = background;
+				dataset.pointBorderWidth = 1;
+			});
+			ETConduct_ShowHideCanvas('canvasGrInlet');
+			ETConduct_ShowHideCanvas('canvasGrOutlet');
+			ETConduct_ShowHideCanvas('canvasGrTq');
+			hideDiv('divResumeWindow');
+			hideDiv('divAbortWindow');
+			//ETConduct_ShowHideCanvas('canvasGrInlet');
+			//ETConduct_ShowHideCanvas('canvasGrOutlet');
+			//ETConduct_ShowHideCanvas('canvasGrTq');
+			//alert('Test id:' + vTestId);    
+			vDBRestartTestStat = RESTART_TEST_GET_PARAM;
 			break;
 		default:
 			vDBRestartTestStat = RESTART_TEST_GET_PARAM;
-		break;
+			break;
 	}
 }
 
@@ -5172,20 +5210,20 @@ function ReentrantStoreTestParameters() {
 	console.log("Status:" + vDBStoreTestParamStat);
 	switch (vDBStoreTestParamStat) {
 		case STORE_TEST_PARAM_BEGIN:
-		if (vFunctionReentryCntr === 0) {
-			vDB_responseReady = 0;
-			vDBStoreTestParamStat = STORE_TEST_PARAM_AWAIT;
-			AjaxStoreTestParameters(ETSet_Pressure, ETSet_OpeningRotation, ETSet_ClosingTorque, ETSet_EndTorque, ETSet_Cycles, ETSet_TestId, ETSet_TestId.length, ETSet_TestConductor, ETSet_TestConductor.length);
-			console.log("Cmd Sent");
-			vFunctionReentryCntr = 1;
-			VDB_StoreRcdProcess = setInterval(ReentrantStoreTestParameters, 100);
-		}
+			if (vFunctionReentryCntr === 0) {
+				vDB_responseReady = 0;
+				vDBStoreTestParamStat = STORE_TEST_PARAM_AWAIT;
+				AjaxStoreTestParameters(ETSet_Pressure, ETSet_OpeningRotation, ETSet_ClosingTorque, ETSet_EndTorque, ETSet_Cycles, ETSet_TestId, ETSet_TestId.length, ETSet_TestConductor, ETSet_TestConductor.length);
+				console.log("Cmd Sent");
+				vFunctionReentryCntr = 1;
+				VDB_StoreRcdProcess = setInterval(ReentrantStoreTestParameters, 100);
+			}
 			break;
 		case STORE_TEST_PARAM_AWAIT:
-		if(vDB_responseReady === 1){
-			vDB_responseReady = 0;
-			vDBStoreTestParamStat = STORE_TEST_PARAM_EXIT_ACTION;
-		}
+			if (vDB_responseReady === 1) {
+				vDB_responseReady = 0;
+				vDBStoreTestParamStat = STORE_TEST_PARAM_EXIT_ACTION;
+			}
 			break;
 		case STORE_TEST_PARAM_EXIT_ACTION:
 			clearInterval(VDB_StoreRcdProcess);
@@ -5200,9 +5238,9 @@ function ReentrantStoreTestParameters() {
 	}
 }
 
-			
+
 function AbortTest() {
-	console.log("At"+vAbortTestStat);
+	console.log("At" + vAbortTestStat);
 	switch (vAbortTestStat) {
 		case ABORT_TEST_BEGIN:
 			vEmergencyStopFlag = 1;
@@ -5212,7 +5250,7 @@ function AbortTest() {
 			vAbortTestStat = ABORT_TEST_EMERGENCY_STOP_MONITOR;
 			break;
 		case ABORT_TEST_EMERGENCY_STOP_MONITOR:
-			if (EnduranceTestExecuteCurrrentStat === ETTEST_EMERGENCY_STOP_COMPLETE){
+			if (EnduranceTestExecuteCurrrentStat === ETTEST_EMERGENCY_STOP_COMPLETE) {
 				vAbortTestStat = ABORT_TEST_UPDATE_STATUS;
 				vDB_responseReady = 0;
 			}
@@ -5222,7 +5260,7 @@ function AbortTest() {
 			vAbortTestStat = ABORT_TEST_AWIT_STATUS_UPDATE_COMP;
 			break;
 		case ABORT_TEST_AWIT_STATUS_UPDATE_COMP:
-			if(vDB_responseReady === 1)
+			if (vDB_responseReady === 1)
 				vAbortTestStat = ABORT_TEST_EXIT_ACTION;
 			break;
 		case ABORT_TEST_EXIT_ACTION:
@@ -5238,7 +5276,7 @@ function AbortTest() {
 }
 
 function ResumeLater() {
-	console.log("At"+vResumeTestStat);
+	console.log("At" + vResumeTestStat);
 	switch (vResumeTestStat) {
 		case RESUME_LATER_BEGIN:
 			vEmergencyStopFlag = 1;
@@ -5248,7 +5286,7 @@ function ResumeLater() {
 			vResumeTestStat = RESUME_LATER_EMERGENCY_STOP_MONITOR;
 			break;
 		case RESUME_LATER_EMERGENCY_STOP_MONITOR:
-			if (EnduranceTestExecuteCurrrentStat === ETTEST_EMERGENCY_STOP_COMPLETE){
+			if (EnduranceTestExecuteCurrrentStat === ETTEST_EMERGENCY_STOP_COMPLETE) {
 				vResumeTestStat = RESUME_LATER_UPDATE_STATUS;
 				vDB_responseReady = 0;
 			}
@@ -5258,8 +5296,8 @@ function ResumeLater() {
 			vResumeTestStat = RESUME_LATER_AWIT_STATUS_UPDATE_COMP;
 			break;
 		case RESUME_LATER_AWIT_STATUS_UPDATE_COMP:
-		if(vDB_responseReady === 1)
-			vResumeTestStat = RESUME_LATER_EXIT_ACTION;
+			if (vDB_responseReady === 1)
+				vResumeTestStat = RESUME_LATER_EXIT_ACTION;
 			break;
 		case RESUME_LATER_EXIT_ACTION:
 			clearInterval(VResumeLaterProcess);
