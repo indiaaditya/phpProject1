@@ -102,7 +102,8 @@ const ETTEST_EXEC_MONITOR_DISCHARGED_OUTLET_PR_INTERVAL_COMP_ACTION = 240;
 const ETTEST_EXEC_MONITOR_DISCHARGED_OUTLET_PR_NORMAL_ACTION = 250;
 const ETTEST_EXEC_MONITOR_DISCHARGED_OUTLET_PR_ERROR_ACTION = 260;
 const ETTEST_EXEC_OPEN_VALVE_BEGIN = 270;
-const ETTEST_EXEC_VALVE_OPEN = 271;
+const ETTEST_EXEC_OPEN_VALVE_BEGIN_STAT_AWAIT = 271;
+const ETTEST_EXEC_VALVE_OPEN = 272;
 const ETTEST_EXEC_MONITOR_VALVE_OPEN_BEGIN = 275;
 const ETTEST_EXEC_MONITOR_VALVE_OPEN = 280;
 const ETTEST_EXEC_MONITOR_VALVE_OPEN_AWAIT = 281;
@@ -235,6 +236,7 @@ var vlOutletExhaustDesired = 0;
 var vlCntrRlyDesired = 0;
 var vlRstRlyDesired = 0;
 var CyclesCounter = 0;
+var AvgCyclesCounter = 0;
 var CounterDisplayActivated = 0;
 var vInletPressureCurrentReading = 0;
 var vOutletPressureCurrentReading = 0;
@@ -265,14 +267,12 @@ var vIntervalId;
 
 //Test Execution Delay Variables
 var vInitDepressurizationInterval = 10;	//10 --- 10*500 --- 5000mSec
-var vValveCloseTimeoutInterval = 8;//10 --- 10*500 --- 5000mSec
 var vValveInletPrApplicationInterval = 10; //10 --- 10*500 --- 5000mSec
-const vChargedOutletPressureMonitorInterval = 10;//10 --- 10*500 --- 5000mSec
-const vChargedOutletDischargeInterval = 10;//10 --- 10*500 --- 5000mSec
-var vDischargedOutletMonitorInterval = 10;//10 --- 10*500 --- 5000mSec
-var vValveOpenTimeoutInterval = 14;//10 --- 10*500 --- 5000mSec
-var vOpenChannelPressureMonitorInterval = 12;//10 --- 10*500 --- 5000mSec
-var vEmergencyStopInterval = 20;//20 --- 20*500 --- 5000mSec
+const vChargedOutletPressureMonitorInterval = 6;//10 --- 10*500 --- 5000mSec
+const vChargedOutletDischargeInterval = 9;//10 --- 10*500 --- 5000mSec
+const vDischargedOutletMonitorInterval = 9;//10 --- 10*500 --- 5000mSec
+const vValveOpenTimeoutInterval = 10;//10 --- 10*500 --- 5000mSec
+const vEmergencyStopInterval = 20;//20 --- 20*500 --- 5000mSec
 var vCycleInProgress = 0;
 
 var vDlyCntr = 0;
@@ -2675,6 +2675,7 @@ function AjaxRetrieveTestParamFromDB(uirTestId) {
 		//alert("Remaining String:" + lclString);
 		vDB_responseReady = 1;
 		vAjaxOwnershipFlag = 0;
+		vResumeTestFlag = 1;
 	}
 
 }
@@ -2852,6 +2853,7 @@ function AjaxSerInterfaceSetDesiredStat(uiDesIsoValve, uiDesInletVentValve, uiDe
 			if (varTestCycle_sh === 1)
 				UpdateCycleStatus();
 			vAjaxOwnershipFlag = 0;
+			AjaxStoreTestRecord();
 		}
 	};
 	//alert("The URL Is:" + urlName);
@@ -3136,6 +3138,7 @@ function AjaxGenerateExcelRpt(uirTestId) {
 	AjaxRequest.onreadystatechange = function () {
 		if (AjaxRequest.readyState === 4 && AjaxRequest.status === 200) {
 			console.log("GenerateExcelRpt Complete");
+			alert("Please Wait till another message box indicating Excel Report Completed Pops up! This may take a while!");
 			vDB_responseReady = 1;
 		}
 	};
@@ -3595,6 +3598,9 @@ function ExecuteEnduranceTest() {
 				console.log("AGS: 2:" + srvoStatus);
 				console.log("Pk Tq:" + vTqNegativeVal);
 				console.log("Set Tq:" + ETSet_ClosingTorque);
+				if(srvoStatus === SERVO_CMD_STAT_UNKNOWN)
+					EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR_SRVO_BEGIN;
+
 				if ((srvoStatus === SERVO_CMD_STAT_ACCEPTED) || (srvoStatus === SERVO_CMD_STAT_COMPLETED)) {
 					console.log("AA:" + vTqNegativeVal);
 					if ((vTqNegativeVal * -1) > (0.5 * ETSet_ClosingTorque)) {
@@ -3824,7 +3830,7 @@ function ExecuteEnduranceTest() {
 
 
 			//vAppliedTq = ETSet_UsedClosingTorque;
-			if (CyclesCounter > 0) {//Previous cycle completed
+			if (AvgCyclesCounter > 0) {//Previous cycle completed
 				//alert("Torque Modification being done!");
 				//alert("Peak Positive Tq:" + vTqPeakPositiveVal);
 				//alert("Peak Negative Tq:" + vTqPeakNegativeVal);
@@ -3878,7 +3884,7 @@ function ExecuteEnduranceTest() {
 				vTqPeakPositiveVal = 0;
 				vTqPeakNegativeVal = 0;
 			}
-			let rtn = (ETSet_OpeningRotation + (ETSet_OpeningRotation / 2));
+			let rtn = (ETSet_OpeningRotation + ETSet_OpeningRotation + (ETSet_OpeningRotation / 2));
 			vServoDelayCntr = 0;
 			if(vAjaxOwnershipFlag === 0){
 				AjaxServoSetStatus(rtn, CW, vAppliedTq);
@@ -3891,7 +3897,7 @@ function ExecuteEnduranceTest() {
 
 		case ETTEST_EXEC_VALVE_CLOSE_AWAIT:
 		if(vAjaxOwnershipFlag === 0){
-			let rtn = (ETSet_OpeningRotation + (ETSet_OpeningRotation / 2));
+			let rtn = (ETSet_OpeningRotation + ETSet_OpeningRotation + (ETSet_OpeningRotation / 2));
 			AjaxServoSetStatus(rtn, CW, vAppliedTq);
 			vServoDelayCntr = 0;
 			ET_ServoMechErrorCntr = 0;
@@ -4226,21 +4232,20 @@ function ExecuteEnduranceTest() {
 				AjaxServoGetStatus();
 				strET_Test_Status = "Opening Test Valve";
 				vET_TestStatusUpdateStausFlag = 1;
+				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_OPEN_VALVE_BEGIN_STAT_AWAIT;
 
-				if (srvoStatus === SERVO_CMD_STAT_COMPLETED || srvoStatus === SERVO_CMD_STAT_ACCEPTED) {
+			}
+			
+
+			break;
+
+		case ETTEST_EXEC_OPEN_VALVE_BEGIN_STAT_AWAIT:
+			if (vAjaxOwnershipFlag === 0) {
+				if (srvoStatus === SERVO_CMD_STAT_COMPLETED) {
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN;
 					vServoAttemptCntr = 0;
 					//alert("Servo Status" + srvoStatus);
 				}
-				else {
-					alert("This is the servo status" + srvoStatus);
-					//EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION;
-					alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-					//alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-					//alert("The Servo is in an unexpected status. \nPlease check if Error is displayed on the servo!\n Exiting and Restarting the test may resolve the issue");
-
-				}
-
 			}
 			break;
 
@@ -4365,12 +4370,13 @@ function ExecuteEnduranceTest() {
 			if (ET_DoNotIncrementCycleCntrFlag === 0) //indicates that this cycle has to be accounted for!!!
 			{
 				CyclesCounter++;
+				AvgCyclesCounter++;
 				vlCntrRlyDesired = 1;
 				CounterDisplayActivated = 1;
 				//Store the last cycle interval in this variable
 				vLastCycleInterval = vCurrrentCycleInterval;
 				vCurrrentCycleInterval = 0;
-				vAverageCycleInterval = vTestInterval / CyclesCounter;
+				vAverageCycleInterval = vTestInterval / AvgCyclesCounter;
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;   //Check if this is correct!!!    
 				if (CyclesCounter >= ETSet_Cycles)   //Indicates that the test is complete!!
 				{
@@ -4520,8 +4526,7 @@ function ExecuteEnduranceTest() {
 
 	CalculateInletPressure();
 	CalculateOutletPressure();
-	if(vAjaxOwnershipFlag === 0)
-		AjaxStoreTestRecord();
+	
 	
 	if (vEmergencyStopFlag === 1)
 		EnduranceTestExecuteCurrrentStat = ETTEST_EMERGENCY_STOP_BEGIN;
@@ -4541,7 +4546,7 @@ function ExecuteEnduranceTest() {
 function UpdateCycleStatus() {
 	if (vET_TestStatusUpdateStausFlag === 1) {
 		vET_TestStatusUpdateStausFlag = 0;
-		SetCanvasHeader('canvasTestCycle', strET_Test_Status, 1, '105% Trebuchet MS');
+		SetCanvasHeader('canvasTestCycle', strET_Test_Status, 1, '145% Trebuchet MS');
 	}
 }
 
@@ -5300,6 +5305,7 @@ function RetrieveTestParamOfTestToResume() {
 				console.log("ETSet_EndTorque:" + ETSet_EndTorque);
 				console.log("ETSet_Cycles:" + ETSet_Cycles);
 				console.log("ET_ResumeTestCompletedCycles:" + ET_ResumeTestCompletedCycles);
+				CyclesCounter = ET_ResumeTestCompletedCycles;
 
 			}
 			break;
