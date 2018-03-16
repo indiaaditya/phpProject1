@@ -499,13 +499,13 @@ textarea {
 
 .btnClass, .btnResume{
     text-align: center;
-    font-size: 150%;
+    font-size: 300%;
     color: #C1CEC7;
     background: transparent;
 }
 
 .btnResume{
-    background: rgba(199,255,0,0.2);
+    /*background: rgba(199,255,0,0.2);*/
 }
 
 

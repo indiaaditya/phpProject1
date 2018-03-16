@@ -20,9 +20,8 @@
     
  
     <body
-        onload = "createAjaxRequest('23','46');
-        maxWindow();
-	"       
+        onload = "SetExitArrowDefocused('canvasExit');
+        alert('Press F11 For Full Screen');"       
         >
     
         <!--[if lt IE 7]>
@@ -117,8 +116,12 @@
             View/Generate Reports
         </button>
         </div>                    
-        <div id='divCvsExit' style="position:relative; top:-90px; left:700px; z-index:1">  
-        <canvas id ="canvasExit" width = "500" height = "200"></canvas>
+        <div id='divCvsExit' style="position:relative; top:-550px; left:1200px; z-index:1">  
+        <canvas id ="canvasExit" onmouseup = "AjaxKillApp();"
+        onmouseover="SetExitArrowFocused('canvasExit')"                 
+        onmouseout="SetExitArrowDefocused('canvasExit')" width = "20" height = "20">
+            
+        </canvas>
         </div>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.js"><\/script>')</script>
         <script src="js/plugins.js"></script>

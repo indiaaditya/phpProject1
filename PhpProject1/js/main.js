@@ -72,12 +72,13 @@ const ETTEST_PREPARE_TEST_APPLY_INLET = 77;
 const ETTEST_PREPARE_TEST_AWAIT_INLET_APPLICATION_DLY = 78;
 const ETTEST_PREPARE_TEST_AWAIT_DLY_COMPLETE_VALID_ACTION = 79;
 const ETTEST_PREPARE_TEST_AWAIT_DLY_COMPLETE_INVALID_ACTION = 80;
-const ETTEST_PREPARE_TEST_TORQUE_CAL = 81;
-const ETTEST_PREPARE_TEST_TORQUE_MONITOR_SRVO_BEGIN = 82;
-const ETTEST_PREPARE_TEST_TORQUE_MONITOR = 83;
-const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE = 84;
-const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_CMD_ACC = 85;
-const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR = 86;
+const ETTEST_PREPARE_TEST_TORQUE_CAL_AWAIT_STAT = 81;
+const ETTEST_PREPARE_TEST_TORQUE_CAL = 82;
+const ETTEST_PREPARE_TEST_TORQUE_MONITOR_SRVO_BEGIN = 83;
+const ETTEST_PREPARE_TEST_TORQUE_MONITOR = 84;
+const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE = 85;
+const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_CMD_ACC = 86;
+const ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR = 87;
 const ETTEST_EXEC_CLOSE_VALVE_BEGIN = 99;
 const ETTEST_EXEC_MONITOR_VALVE_CLOSE = 110;
 const ETTEST_EXEC_MONITOR_VALVE_CLOSE_AWAIT_STAT = 112;
@@ -268,9 +269,9 @@ var vIntervalId;
 //Test Execution Delay Variables
 var vInitDepressurizationInterval = 10;	//10 --- 10*500 --- 5000mSec
 var vValveInletPrApplicationInterval = 10; //10 --- 10*500 --- 5000mSec
-const vChargedOutletPressureMonitorInterval = 6;//10 --- 10*500 --- 5000mSec
-const vChargedOutletDischargeInterval = 9;//10 --- 10*500 --- 5000mSec
-const vDischargedOutletMonitorInterval = 9;//10 --- 10*500 --- 5000mSec
+const vChargedOutletPressureMonitorInterval = 4;//6,10 --- 10*500 --- 5000mSec
+const vChargedOutletDischargeInterval = 6;//9,10 --- 10*500 --- 5000mSec
+const vDischargedOutletMonitorInterval = 6;//9,10 --- 10*500 --- 5000mSec
 const vValveOpenTimeoutInterval = 10;//10 --- 10*500 --- 5000mSec
 const vEmergencyStopInterval = 20;//20 --- 20*500 --- 5000mSec
 var vCycleInProgress = 0;
@@ -3469,95 +3470,100 @@ function ExecuteEnduranceTest() {
 			vTqCalCntr = 0;
 			strET_Test_Status = "Torque Calibration In Progress";
 			vET_TestStatusUpdateStausFlag = 1;
-			EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL;
-
+			EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL_AWAIT_STAT;
 			break;
-
-		case ETTEST_PREPARE_TEST_TORQUE_CAL:
-			vlCntrRlyDesired = 0;
-			vlRstRlyDesired = 0;
-			vCycleInProgress = 0;
-			if (vTqCalCntr < 15) {
-				if (vAjaxOwnershipFlag === 0) {
-					AjaxServoGetStatus();
-					//console.log("Point where error gen:" + srvoStatus);
-					if (srvoStatus != SERVO_CMD_STAT_ERR) {
-						//First Check if this is the first calibration or Torque Modification cal!
-						if (vET_Tq_InitialCalDone === 0) {//This indicates that this is the first cycle or the cycle is resumed from a cold start!
-							vAppliedTq = ETSet_UsedClosingTorque - (ETSet_UsedClosingTorque / 5);
-							vET_Tq_InitialCalDone = 1;
-						}
-						else {//This indicates that torque Modification is in progress!
-							if (vTqPeakNegativeVal > ETSet_UsedClosingTorque) {
-								//alert("Seems More Torque was applied!" + "\nPeak Neg Tq:" + vTqPeakNegativeVal + "\n Set Negative Tq:" + ETSet_UsedClosingTorque);
-								if (vTqPeakNegativeVal - ETSet_UsedClosingTorque > vTqMaxTolerance) {
-									//alert("Torque Modification is required");
-									let diff;
-									diff = vTqPeakNegativeVal - ETSet_UsedClosingTorque;
-									if (diff > 5) {
-										alert("Too large a difference! No point in making adjustments!");
-									}
-									else {
-										//alert("Decreasing the pgmd Tq Value" + "\nvAppliedTq" + vAppliedTq + "\nETSet_UsedClosingTorque" + ETSet_UsedClosingTorque);
-										//vAppliedTq = ETSet_UsedClosingTorque - (vTqPeakNegativeVal - ETSet_UsedClosingTorque);
-										vAppliedTq = vAppliedTq - ((vTqPeakNegativeVal - ETSet_UsedClosingTorque) / 2);
-									}
-								}
-								else {
-									EnduranceTestExecuteCurrrentStat = vET_Return_Status;
-								}
-							}
-							if (vTqPeakNegativeVal < ETSet_UsedClosingTorque) {
-								//alert ("Seems Less Torque was applied!");
-								if (ETSet_UsedClosingTorque - vTqPeakNegativeVal > vTqMaxTolerance) {
-									//alert("Torque Modification is required");
-									let diff2;
-									diff2 = (ETSet_ClosingTorque - vTqPeakNegativeVal);
-									if (diff2 > 5) {
-										alert("Too large a difference! No point in making adjustments!");
-									}
-									else {
-										//alert("Increasing the pgmd Tq Value");
-										//vAppliedTq = ETSet_UsedClosingTorque + (vTqPeakNegativeVal - ETSet_ClosingTorque);
-										vAppliedTq = vAppliedTq + ((ETSet_UsedClosingTorque - vTqPeakNegativeVal) / 2);
-									}
-								}
-								else {
-									EnduranceTestExecuteCurrrentStat = vET_Return_Status;
-								}
-
-							}
-							if (vTqPeakNegativeVal === ETSet_UsedClosingTorque) {
-								EnduranceTestExecuteCurrrentStat = vET_Return_Status;
-							}
-						}
-						//Reset the values of Peak torque Values
-						vTqPeakPositiveVal = 0;
-						vTqPeakNegativeVal = 0;
-						vCalAttemptCntr = 0;
-						if (EnduranceTestExecuteCurrrentStat !== vET_Return_Status) {
-							vAjaxServoRespFlag = 0;
-							if (vAjaxOwnershipFlag === 0) {
-								AjaxServoSetStatus((ETSet_OpeningRotation * 4), CW, vAppliedTq);//IF 360 closing pgmd, it will try and go to 360*4 to close the valve!
-								EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR_SRVO_BEGIN;
-							}
-							else
-								EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_AWAIT_SERVO_CLOSE_CMD_SEND;
-							vServoDelayCntr = 0;
-						}
-					}
-					else {//Declare an Error
-						alert("AAA");
-						ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
-						ET_ServoMechErrorCntr++;
-						ET_ShowHideError();
-					}
-				}
+		
+		case ETTEST_PREPARE_TEST_TORQUE_CAL_AWAIT_STAT:
+			if(vTqCalCntr < 15){
+				AjaxServoGetStatus();
+				EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL;
 			}
 			else {
 				ET_ErrorId = ET_ERROR_CALIBRATION_FAILURE;
 				ET_ShowHideError();
 			}
+		break;	
+
+		case ETTEST_PREPARE_TEST_TORQUE_CAL:
+			vlCntrRlyDesired = 0;
+			vlRstRlyDesired = 0;
+			vCycleInProgress = 0;
+			if (vAjaxOwnershipFlag === 0) {
+				//console.log("Point where error gen:" + srvoStatus);
+				if (srvoStatus != SERVO_CMD_STAT_ERR) {
+					//First Check if this is the first calibration or Torque Modification cal!
+					if (vET_Tq_InitialCalDone === 0) {//This indicates that this is the first cycle or the cycle is resumed from a cold start!
+						vAppliedTq = ETSet_UsedClosingTorque - (ETSet_UsedClosingTorque / 5);
+						vET_Tq_InitialCalDone = 1;
+					}
+					else {//This indicates that torque Modification is in progress!
+						if (vTqPeakNegativeVal > ETSet_UsedClosingTorque) {
+							//alert("Seems More Torque was applied!" + "\nPeak Neg Tq:" + vTqPeakNegativeVal + "\n Set Negative Tq:" + ETSet_UsedClosingTorque);
+							if (vTqPeakNegativeVal - ETSet_UsedClosingTorque > vTqMaxTolerance) {
+								//alert("Torque Modification is required");
+								let diff;
+								diff = vTqPeakNegativeVal - ETSet_UsedClosingTorque;
+								if (diff > 5) {
+									alert("Too large a difference! No point in making adjustments!");
+								}
+								else {
+									//alert("Decreasing the pgmd Tq Value" + "\nvAppliedTq" + vAppliedTq + "\nETSet_UsedClosingTorque" + ETSet_UsedClosingTorque);
+									//vAppliedTq = ETSet_UsedClosingTorque - (vTqPeakNegativeVal - ETSet_UsedClosingTorque);
+									vAppliedTq = vAppliedTq - ((vTqPeakNegativeVal - ETSet_UsedClosingTorque) / 2);
+								}
+							}
+							else {
+								EnduranceTestExecuteCurrrentStat = vET_Return_Status;
+							}
+						}
+						if (vTqPeakNegativeVal < ETSet_UsedClosingTorque) {
+							//alert ("Seems Less Torque was applied!");
+							if (ETSet_UsedClosingTorque - vTqPeakNegativeVal > vTqMaxTolerance) {
+								//alert("Torque Modification is required");
+								let diff2;
+								diff2 = (ETSet_ClosingTorque - vTqPeakNegativeVal);
+								if (diff2 > 5) {
+									alert("Too large a difference! No point in making adjustments!");
+								}
+								else {
+									//alert("Increasing the pgmd Tq Value");
+									//vAppliedTq = ETSet_UsedClosingTorque + (vTqPeakNegativeVal - ETSet_ClosingTorque);
+									vAppliedTq = vAppliedTq + ((ETSet_UsedClosingTorque - vTqPeakNegativeVal) / 2);
+								}
+							}
+							else {
+								EnduranceTestExecuteCurrrentStat = vET_Return_Status;
+							}
+
+						}
+						if (vTqPeakNegativeVal === ETSet_UsedClosingTorque) {
+							EnduranceTestExecuteCurrrentStat = vET_Return_Status;
+						}
+					}
+					//Reset the values of Peak torque Values
+					vTqPeakPositiveVal = 0;
+					vTqPeakNegativeVal = 0;
+					vCalAttemptCntr = 0;
+					if (EnduranceTestExecuteCurrrentStat !== vET_Return_Status) {
+						vAjaxServoRespFlag = 0;
+						if (vAjaxOwnershipFlag === 0) {
+							AjaxServoSetStatus((ETSet_OpeningRotation * 4), CW, vAppliedTq);//IF 360 closing pgmd, it will try and go to 360*4 to close the valve!
+							EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_MONITOR_SRVO_BEGIN;
+						}
+						else
+							EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_AWAIT_SERVO_CLOSE_CMD_SEND;
+						vServoDelayCntr = 0;
+					}
+				}
+				else {//Declare an Error
+					alert("AAA");
+					ET_ErrorId = ET_ERROR_SERVO_MECHANISM;
+					ET_ServoMechErrorCntr++;
+					ET_ShowHideError();
+				}
+			}
+	
+			
 			break;
 		
 		case ETTEST_PREPARE_TEST_AWAIT_SERVO_CLOSE_CMD_SEND:
@@ -3676,7 +3682,14 @@ function ExecuteEnduranceTest() {
 					vServoDelayCntr = 0;
 				}
 				else{
-					EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR;
+					if(srvoStatus === SERVO_CMD_STAT_UNKNOWN){
+						 if(ET_Inlet_Pressure - ET_Outlet_Pressure < 40){
+						 EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_CAL;
+						 vServoDelayCntr = 0;
+						 }
+					}
+					else
+						EnduranceTestExecuteCurrrentStat = ETTEST_PREPARE_TEST_TORQUE_OPEN_VALVE_MONITOR;
 				}
 			}
 			else{
@@ -3805,7 +3818,7 @@ function ExecuteEnduranceTest() {
 
 		case ETTEST_EXEC_MONITOR_VALVE_CLOSE_AWAIT_STAT:
 			if(vAjaxServoRespFlag === 1){
-				vAjaxOwnershipFlag = 0;
+				vAjaxServoRespFlag = 0;
 				if (srvoStatus !== SERVO_CMD_STAT_ACCEPTED) {
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_CLOSE_STD_ACTION;
 				}
@@ -3959,6 +3972,7 @@ function ExecuteEnduranceTest() {
 						break;
 
 					case SERVO_CMD_STAT_ACCEPTED:
+					case SERVO_CMD_STAT_UNKNOWN:
 						if (vTqPeakNegativeVal > (0.8 * ETSet_UsedClosingTorque)) {
 							EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_CHARGED_OUTLET_PR_BEGIN;
 						}
@@ -3975,6 +3989,8 @@ function ExecuteEnduranceTest() {
 							}
 						}
 						break;
+					
+						
 
 					default:
 						alert("Unexpected Servo Status:" + srvoStatus);
@@ -4241,10 +4257,26 @@ function ExecuteEnduranceTest() {
 
 		case ETTEST_EXEC_OPEN_VALVE_BEGIN_STAT_AWAIT:
 			if (vAjaxOwnershipFlag === 0) {
-				if (srvoStatus === SERVO_CMD_STAT_COMPLETED) {
+				switch(srvoStatus){
+					case SERVO_CMD_STAT_COMPLETED:
+					case SERVO_CMD_STAT_UNKNOWN:
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN;
 					vServoAttemptCntr = 0;
-					//alert("Servo Status" + srvoStatus);
+					break;
+
+					case SERVO_CMD_STAT_ACCEPTED:
+					alert("Servo Cmd Stat Accepted");
+					break;
+					case SERVO_CMD_STAT_ERR:
+					alert("Servo Error Detected");
+					break;
+
+					case SERVO_CMD_STAT_LOADED:
+					alert("Unexpected Servo Status:SERVO_CMD_STAT_LOADED");
+					break;
+
+					default:
+					break;
 				}
 			}
 			break;
@@ -4280,18 +4312,34 @@ function ExecuteEnduranceTest() {
 			break;
 		
 		case ETTEST_EXEC_MONITOR_VALVE_OPEN_AWAIT:
-			if (srvoStatus === SERVO_CMD_STAT_COMPLETED)
+
+			switch(srvoStatus){
+				case SERVO_CMD_STAT_COMPLETED:
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_STD_ACTION;
-			else {
-				vServoDelayCntr++;
-				if ((srvoStatus === SERVO_CMD_STAT_ERR) || (vServoDelayCntr > 44))   //ToDo: Servo Error Detected
-				{
+				break;
+
+				case SERVO_CMD_STAT_LOADED:
+				case SERVO_CMD_STAT_ACCEPTED:
+				case SERVO_CMD_STAT_ERR:
+				if(vServoDelayCntr > 44){
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION;
-					ET_ValveOpenErrCntr = 0;
+					ET_ValveOpenErrCntr = 0;					
 				}
 				else
 					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_OPEN;
+				break;
+
+				case SERVO_CMD_STAT_UNKNOWN:
+				if(ET_Inlet_Pressure - ET_Outlet_Pressure < 30){
+					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_STD_ACTION;
+				}
+				break;
+
+				default:
+					alert("never ever should come here");
+				break;
 			}
+			vServoDelayCntr++;
 		break;
 			
 		case ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION:
