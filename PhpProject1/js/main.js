@@ -62,7 +62,7 @@ var ETPARAMENTRY_TESTPRESSURE_MIN = 15;
 var ETPARAMENTRY_TESTPRESSURE_MAX = 400;
 var ETPARAMENTRY_OPEN_ROTATION_MIN = 20;
 var ETPARAMENTRY_OPEN_ROTATION_MAX = 1440;
-var ETPARAMENTRY_CLOSING_TORQUE_MIN = 3.5;
+var ETPARAMENTRY_CLOSING_TORQUE_MIN = 2;
 var ETPARAMENTRY_CLOSING_TORQUE_MAX = 33;
 var ETSET_CYCLES_MIN = 1;
 var ETSET_CYCLES_MAX = 5000;
@@ -1995,7 +1995,7 @@ function ETParam_ShowGetTorque() {
 	canvasKbdHide();
 	slider_minv = 0;
 	slider_maxv = 33;
-	slider_currv = 3.5;
+	slider_currv = 2;
 	slider_step = 0.5;
 	setupSlider();
 }
@@ -3222,7 +3222,7 @@ function AjaxRetrieveTestToResumeData() {
 			lclString = lclString.replace(subString, '');
 
 			lclPosnCntr = lclString.search(';');
-			subString = lclString.slice(0, lclPosnCntr);
+			subString = lclString.slice(0, lclPosnCntr);  
 			console.log("Split String:" + subString);
 			ET_ResumeTestCompletedCycles = parseInt(subString);
 			console.log("ET_ResumeTestCompletedCycles:" + ET_ResumeTestCompletedCycles);
@@ -3672,7 +3672,7 @@ function ExecuteEnduranceTest() {
 			vlRstRlyDesired = 0;
 			vCycleInProgress = 0;
 			if (vAjaxOwnershipFlag === 0) {
-				AjaxServoSetStatus(ETSet_OpeningRotation, ACW, ETSet_ClosingTorque + 2);
+				AjaxServoSetStatus(ETSet_OpeningRotation, ACW, ETSet_ClosingTorque + 10);
 				vTqCalCntr++;
 				console.log("Open Cmd Sent!");
 				vServoDelayCntr = 0;
@@ -3817,11 +3817,13 @@ function ExecuteEnduranceTest() {
 			//*****************************************************************************************************************************
 			//
 			//Debug: Remove Later! Allowed to let the test go through!
+			/*
 			DelMeCntr++;
 			if (DelMeCntr > 30) {
 				DelMeCntr = 0;
 				vReturnVal = PRESSURE_OK;
 			}
+			*/
 			if ((vReturnVal === PRESSURE_OK) || (vReturnVal === PRESSURE_MORE)) {
 				vServoErrDispFlag = 0;
 				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE;
@@ -3844,9 +3846,20 @@ function ExecuteEnduranceTest() {
 			strET_Test_Status = "Closing Test Valve";
 			vServoAttemptCntr = 0;	//This counter is for counting the number of attempts for closing the T/P.
 			vET_TestStatusUpdateStausFlag = 1;
+			vReturnVal = ValidatePressure(ET_Inlet_Pressure, ETSet_Pressure, 5, 1);
 			if (vAjaxOwnershipFlag === 0) {
 				AjaxServoGetStatus();
-				EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE_AWAIT_STAT;
+				if ((vReturnVal === PRESSURE_OK) || (vReturnVal === PRESSURE_MORE)) {
+					vServoErrDispFlag = 0;
+					EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_MONITOR_VALVE_CLOSE_AWAIT_STAT;
+					vServoDelayCntr = 0;
+					ET_ErrorId = 0;
+				}
+				else {//indicates that there is insufficient pressure!
+					ET_ErrorId = ET_ERROR_INSUFFICIENT_INLET_PRESSURE;
+					vServoDelayCntr = 0;
+				}
+				ET_ShowHideError();
 			}
 			vServoDelayCntr++;
 			if (vServoDelayCntr > 240) {
@@ -4306,7 +4319,7 @@ function ExecuteEnduranceTest() {
 			vlRstRlyDesired = 0;
 			//alert("B");
 			if (vAjaxOwnershipFlag === 0) {
-				AjaxServoSetStatus(ETSet_OpeningRotation, ACW, ETSet_ClosingTorque + 2);
+				AjaxServoSetStatus(ETSet_OpeningRotation, ACW, ETSet_ClosingTorque + 10);
 				vAwaitPressureBuild = 0;
 				vServoAttemptCntr++;
 				vServoDelayCntr = 0;
@@ -4339,7 +4352,7 @@ function ExecuteEnduranceTest() {
 						if (ET_Outlet_Pressure > 4)
 							EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_STD_ACTION;
 						else {
-							if (vServoAttemptCntr > 10) {
+							if (vServoDelayCntr > 10) {
 								EnduranceTestExecuteCurrrentStat = ETTEST_EXEC_VALVE_OPEN_ERROR_ACTION;
 							}
 							else {
