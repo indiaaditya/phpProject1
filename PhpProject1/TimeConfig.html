@@ -18,6 +18,9 @@
     </head>
     <body onLoad = "SetBackArrowDefocused('canvasBackArrow');
                     SetExitArrowDefocused('canvasExit');
+                    RecoverExternalLeakageIntvl();
+                    RecoverInternalLeakageIntvl();
+                    RecoverTempStabRestingIntvl();
                     
                     ">
         
@@ -72,54 +75,40 @@
             <img border="0" src="img/right_bracket.gif" width="16" height="40">
         </div>        
         <p class="EndurancePageMainEvent">
-            Select one of the actions to continue:
+            Select the Delays:
         </p>
         <br>
         </div>
-        
-        <button id = "btnConductFreshTest"  
-                onmouseover="focusFunction('btnConductFreshTest','canvasActionDetails');
-                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
-                    SetCanvasText('canvasActionDetails','To run a fresh test',2,'150% Trebuchet MS')"        
-                    onmouseout="lostFocusFunction('btnConductFreshTest','canvasActionDetails')"
-                    onmouseup ="LoadPage('testParamEntry.html')"
-                    >
-            Conduct a fresh test
+        <div id='sliderExtLkg' style="position:relative;top: -360px;color:#C1CEC7;left: 220px;width: 500px; "></div>
+        <button id = "btnExternalLeakageIntvl"
+        onmouseover = "ChangeColorOnFocus('btnExternalLeakageIntvl')";
+        onmouseout = "ChangeColorOnDefocus('btnExternalLeakageIntvl')";
+        onmouseup = "UpdateExternalLeakageIntvl";
+        >
+            Update External Leakage Interval
         </button>
-        <div id='d1' style="position:relative; top:-90px; left:700px; z-index:1">  
-        <canvas id ="canvasActionDetails" width = "500" height = "200"></canvas>
-        </div>
-        <div id="d2" style="position:relative; top:-200px; z-index:1">
-        <button id = "btnResumePrevTest"
-                onmouseover="focusFunction('btnResumePrevTest','canvasActionDetails');
-                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
-                    SetCanvasText('canvasActionDetails','To resume previously paused/incomplete test',2,'150% Trebuchet MS');
-                    SetBackArrowDefocused('canvasBackArrow');
-                    SetExitArrowDefocused('canvasExit');"                           
-                    onmouseout="lostFocusFunction('btnResumePrevTest','canvasActionDetails')" 
-                    onmouseup ="LoadPage('testResume.html')"
-                    >
-            Resume paused/incomplete test
-        </button>
-        </div>   
-        
-                
-        
-        <div id ="toolBtnID" style ="position:relative; top:-90px;left:900px;z-index:2 ">
-            <button id = "btnCustomOperation"
-                    
-                    onmouseover="focusFunction('btnResumePrevTest','canvasActionDetails');
-                    SetCanvasHeader('canvasActionDetails','Use this option to:',1,'200% Trebuchet MS');
-                    SetCanvasText('canvasActionDetails','To Operate individual component separately',2,'150% Trebuchet MS');         
-                    SetCanvasText('canvasActionDetails','**For Trained Professionals ONLY!**',3,'150% Trebuchet MS')";
-                    onmouseout="lostFocusFunction('btnResumePrevTest','canvasActionDetails')";
-                    onmouseup ="LoadPage('TimeConfig.html')";
-                    >
-                <img border="0" src="img/tools2.bmp" width="50" height="50">
-            </button>
-        </div>
         <br>
-        
+
+        <div id='sliderIntLkg' style="position:relative;top: -360px;color:#C1CEC7;left: 220px;width: 500px; "></div>
+        <button id = "btnInternalLeakageIntvl"
+        onmouseover = "ChangeColorOnFocus('btnInternalLeakageIntvl')";
+        onmouseout = "ChangeColorOnDefocus('btnInternalLeakageIntvl')";
+        onmouseup = "UpdateInternalLeakageIntvl";
+        >
+        Update Internal Leakage Interval
+        </button>
+        <br>
+
+        <div id='sliderTempStabRest' style="position:relative;top: -360px;color:#C1CEC7;left: 220px;width: 500px; "></div>
+        <button id = "btnTempStabRestingIntvl"
+        onmouseover = "ChangeColorOnFocus('btnTempStabRestingIntvl')";
+        onmouseout = "ChangeColorOnDefocus('btnTempStabRestingIntvl')";
+        onmouseup = "UpdateTempStabRestingIntvl";
+        >
+        Update Temperature Stabilization And Resting Interval
+        </button>
+        <br>
+  
         <div id='divCvsBackArrow' style="position:relative; top:-150px; left:0px; z-index:1">  
         <canvas id ="canvasBackArrow" width = "50" height = "40"
                     onmouseover="SetBackArrowFocused('canvasBackArrow')"                 

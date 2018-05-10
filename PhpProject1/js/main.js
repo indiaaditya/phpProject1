@@ -1838,8 +1838,9 @@ function ETPARAMENTRY_showSelectedParameterCanvas(varParameterToShow) {
 	}
 }
 
+/*
 function ETParamEdit_GlowEditIcon() {
-	/* if(coordX > 239 && coordX < 261)  //only one Y needs to be checked since all edit icons are aligned vertically
+	 if(coordX > 239 && coordX < 261)  //only one Y needs to be checked since all edit icons are aligned vertically
 	 {
 	 alert("Somewhere close to the edit icon");
 	 if(coordY > 79 && coordY < 99)
@@ -1857,9 +1858,8 @@ function ETParamEdit_GlowEditIcon() {
 	 if(coordY > 319 && coordY < 329)
 		 ShowIconInCanvas('canvasTestParam','/PhpProject1/img/Edit-Enable.ico',240, 320);	    
 	 }
-	 */
 }
-
+*/
 function ETParam_ShowError() {
 	if (ET_ERROR_DISPLAYED_FLAG === 0) {
 		drawCanvasRectangleWithFillColorAndBorder('canvasErrWindow', '#C7FF32', '#C1CEC7', 5);
@@ -5582,4 +5582,31 @@ function ResumeLater() {
 			break;
 	}
 	console.log("Resume Later");
+}
+
+function UpdateExternalLeakageIntvl(vValToUpdate){
+
+}
+
+function UpdateInternalLeakageIntvl(vValToUpdate){
+
+}
+
+function UpdateTempStabRestingIntvl(vValToUpdate){
+
+}
+
+function RecoverExternalLeakageIntvl(){
+	let extLeakageIntvl;
+	return extLeakageIntvl;
+}
+
+function RecoverInternalLeakageIntvl(){
+	let intLeakageIntvl;
+	return intLeakageIntvl;
+}
+
+function RecoverTempStabRestingIntvl(){
+	let tempStabIntvl;
+	return tempStabIntvl;	
 }
